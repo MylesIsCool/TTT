@@ -243,7 +243,7 @@ public final class InteractHelper {
                     player.sendMessage(ChatColor.GRAY + "You have picked up a token from this body, spend it on the shop /ttt shop");
                 } else {
                     // If detective & traitor then :)
-                    if (challengerOptional.get().getMetadata().get(Role.DETECTIVE).isPresent() && !traitor) {
+                    if (challengerOptional.get().getMetadata().get(Role.DETECTIVE).isPresent()) {
                         body.setToken(false);
                         int tokens = ShopHelper.getTokens(challengerOptional.get());
                         challengerOptional.get().getMetadata().set(ShopHelper.TOKEN_KEY, tokens + 1);
