@@ -38,6 +38,7 @@ import net.caseif.ttt.util.helper.platform.TitleHelper;
 import net.caseif.flint.challenger.Challenger;
 import net.caseif.flint.round.Round;
 import net.caseif.rosetta.Localizable;
+import net.caseif.ttt.util.shop.ShopHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -103,6 +104,8 @@ public final class RoundHelper {
                     TTTCore.locale.getLocalizable("info.personal.status.role.detective")
                             .withPrefix(Color.DETECTIVE).sendTo(pl);
                     TitleHelper.sendStatusTitle(pl, Role.DETECTIVE);
+                    ch.getMetadata().set(ShopHelper.TOKEN_KEY, 2);
+                    pl.sendMessage(ChatColor.GRAY + "You have started the game with 2 tokens, spend it on the shop /ttt shop. You can earn tokens by opening traitor body chests.");
                 } else {
                     TTTCore.locale.getLocalizable("info.personal.status.role.innocent")
                             .withPrefix(Color.INNOCENT).sendTo(pl);
@@ -114,6 +117,8 @@ public final class RoundHelper {
                             .withPrefix(Color.TRAITOR).sendTo(pl);
                     TTTCore.locale.getLocalizable("info.personal.status.role.traitor.allies")
                             .withPrefix(Color.TRAITOR).sendTo(pl);
+                    ch.getMetadata().set(ShopHelper.TOKEN_KEY, 2);
+                    pl.sendMessage(ChatColor.GRAY + "You have started the game with 2 tokens, spend it on the shop /ttt shop. You can earn tokens by opening body chests.");
                     for (Challenger traitor : ch.getTeam().get().getChallengers()) {
                         if (traitor != ch) { // don't list them as an ally to themselves
                             pl.sendMessage(Color.TRAITOR + "- " + traitor.getName());

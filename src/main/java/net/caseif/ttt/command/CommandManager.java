@@ -50,6 +50,7 @@ import net.caseif.ttt.command.handler.round.StartCommand;
 import net.caseif.ttt.command.handler.use.JoinCommand;
 import net.caseif.ttt.command.handler.use.LeaveCommand;
 import net.caseif.ttt.command.handler.use.ListArenasCommand;
+import net.caseif.ttt.command.handler.use.ShopCommand;
 import net.caseif.ttt.util.constant.Color;
 
 import com.google.common.collect.ImmutableMap;
@@ -69,6 +70,7 @@ public class CommandManager implements CommandExecutor {
 
         // use
         addRef(map, "join", JoinCommand.class, "use", "[arena name]", 1, false);
+        addRef(map, "shop", ShopCommand.class, "use", "", 1, false, "store", "s");
         addRef(map, "leave", LeaveCommand.class, "use", "", 1, false);
         addRef(map, "listarenas", ListArenasCommand.class, "use", "", 1, true);
 

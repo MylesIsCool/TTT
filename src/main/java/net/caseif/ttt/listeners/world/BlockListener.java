@@ -24,11 +24,13 @@
 
 package net.caseif.ttt.listeners.world;
 
+import net.caseif.flint.arena.Arena;
 import net.caseif.ttt.TTTCore;
-
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 /**
@@ -47,6 +49,18 @@ public class BlockListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         if (TTTCore.mg.getChallenger(event.getPlayer().getUniqueId()).isPresent()) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPhysics(BlockPhysicsEvent event) {
+        for (Arena arena : TTTCore.getInstance().mg.getArenas()) {
+            if (event.getBlock().getWorld().getName().equalsIgnoreCase(arena.getWorld())) {
+                if (event.getBlock().getType() == Material.CACTUS) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
         }
     }
 

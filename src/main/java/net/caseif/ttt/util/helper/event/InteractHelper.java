@@ -24,6 +24,10 @@
 
 package net.caseif.ttt.util.helper.event;
 
+import com.google.common.base.Optional;
+import net.caseif.flint.challenger.Challenger;
+import net.caseif.flint.util.physical.Location3D;
+import net.caseif.rosetta.Localizable;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.scoreboard.ScoreboardManager;
 import net.caseif.ttt.util.Body;
@@ -33,13 +37,11 @@ import net.caseif.ttt.util.constant.MetadataKey;
 import net.caseif.ttt.util.constant.Role;
 import net.caseif.ttt.util.constant.Stage;
 import net.caseif.ttt.util.helper.data.CollectionsHelper;
+import net.caseif.ttt.util.helper.gamemode.RoleHelper;
 import net.caseif.ttt.util.helper.platform.InventoryHelper;
-
-import com.google.common.base.Optional;
-import net.caseif.flint.challenger.Challenger;
-import net.caseif.flint.util.physical.Location3D;
-import net.caseif.rosetta.Localizable;
+import net.caseif.ttt.util.shop.ShopHelper;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Arrow;
@@ -222,6 +224,34 @@ public final class InteractHelper {
     private static void searchBody(Body body, Player player, int size) {
         Inventory inv = Bukkit.createInventory(player, size);
 
+        // give token
+        if (body.isToken()) {
+            Optional<Challenger> challengerOptional = TTTCore.getInstance().mg.getChallenger(player.getUniqueId());
+            if (challengerOptional.isPresent()) {
+                boolean traitor = false;
+                if (body.getKiller().isPresent()) {
+                    Optional<Challenger> killer = TTTCore.getInstance().mg.getChallenger(body.getKiller().get());
+                    if (RoleHelper.isTraitor(killer.get())) {
+                        traitor = true;
+                    }
+                }
+                if (RoleHelper.isTraitor(challengerOptional.get()) && !traitor) {
+                    // Pick up token
+                    body.setToken(false);
+                    int tokens = ShopHelper.getTokens(challengerOptional.get());
+                    challengerOptional.get().getMetadata().set(ShopHelper.TOKEN_KEY, tokens + 1);
+                    player.sendMessage(ChatColor.GRAY + "You have picked up a token from this body, spend it on the shop /ttt shop");
+                } else {
+                    // If detective & traitor then :)
+                    if (challengerOptional.get().getMetadata().get(Role.DETECTIVE).isPresent() && !traitor) {
+                        body.setToken(false);
+                        int tokens = ShopHelper.getTokens(challengerOptional.get());
+                        challengerOptional.get().getMetadata().set(ShopHelper.TOKEN_KEY, tokens + 1);
+                        player.sendMessage(ChatColor.GRAY + "You have picked up a token from this body, spend it on the shop /ttt shop");
+                    }
+                }
+            }
+        }
         // player identifier
         {
             ItemStack id = new ItemStack(TTTCore.HALLOWEEN ? Material.JACK_O_LANTERN : Material.PAPER, 1);

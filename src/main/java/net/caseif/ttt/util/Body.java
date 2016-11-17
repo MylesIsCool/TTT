@@ -44,10 +44,11 @@ public class Body {
     private final long deathTime;
     private final long expiry;
 
+    private boolean token;
     private boolean found;
 
     public Body(Round round, Location3D location, UUID player, String name, UUID killer, String role, long deathTime,
-                long expireTime) {
+                long expireTime, boolean token) {
         this.round = round;
         this.location = location;
         this.player = player;
@@ -56,6 +57,7 @@ public class Body {
         this.role = role != null ? role : Role.INNOCENT;
         this.deathTime = deathTime;
         this.expiry = expireTime;
+        this.token = token;
     }
 
     public Round getRound() {
@@ -98,6 +100,13 @@ public class Body {
         found = true;
     }
 
+    public boolean isToken() {
+        return token;
+    }
+
+    public void setToken(boolean token) {
+        this.token = token;
+    }
     @Override
     public int hashCode() {
         return Objects.hashCode(round, location, player, name, killer, role, expiry);

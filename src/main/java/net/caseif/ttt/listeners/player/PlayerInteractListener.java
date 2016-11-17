@@ -32,6 +32,8 @@ import net.caseif.ttt.util.helper.event.InteractHelper;
 import com.google.common.base.Optional;
 import net.caseif.flint.challenger.Challenger;
 import net.caseif.rosetta.Localizable;
+import net.caseif.ttt.util.shop.ShopHelper;
+import net.caseif.ttt.util.shop.TTTInventoryHolder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -76,6 +78,11 @@ public class PlayerInteractListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
+        if(event.getInventory().getHolder() instanceof TTTInventoryHolder){
+            ShopHelper.handleClick((Player) event.getWhoClicked(), event.getInventory(), event);
+            event.setCancelled(true);
+            return;
+        }
         for (HumanEntity he : event.getViewers()) {
             Player p = (Player) he;
             Optional<Challenger> ch = TTTCore.mg.getChallenger(p.getUniqueId());
@@ -87,6 +94,10 @@ public class PlayerInteractListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
+        if(event.getInventory().getHolder() instanceof TTTInventoryHolder){
+            ShopHelper.handleClose((Player) event.getPlayer(), event.getInventory(), event);
+            return;
+        }
         Optional<Challenger> ch = TTTCore.mg.getChallenger(event.getPlayer().getUniqueId());
         if (ch.isPresent() && ch.get().getMetadata().containsKey(MetadataKey.Player.SEARCHING_BODY)) {
             ch.get().getMetadata().remove(MetadataKey.Player.SEARCHING_BODY);

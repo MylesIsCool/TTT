@@ -24,8 +24,9 @@
 
 package net.caseif.ttt.util.helper.event;
 
-import static net.caseif.ttt.util.helper.gamemode.RoleHelper.isTraitor;
-
+import com.google.common.base.Optional;
+import net.caseif.flint.challenger.Challenger;
+import net.caseif.flint.util.physical.Boundary;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.scoreboard.ScoreboardManager;
 import net.caseif.ttt.util.Body;
@@ -36,10 +37,6 @@ import net.caseif.ttt.util.helper.gamemode.KarmaHelper;
 import net.caseif.ttt.util.helper.platform.LocationHelper;
 import net.caseif.ttt.util.helper.platform.NmsHelper;
 import net.caseif.ttt.util.helper.platform.PlayerHelper;
-
-import com.google.common.base.Optional;
-import net.caseif.flint.challenger.Challenger;
-import net.caseif.flint.util.physical.Boundary;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -53,6 +50,8 @@ import org.bukkit.projectiles.ProjectileSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static net.caseif.ttt.util.helper.gamemode.RoleHelper.isTraitor;
 
 /**
  * Utility class for player death-related functionality.
@@ -202,7 +201,8 @@ public final class DeathHelper {
                         ? Role.DETECTIVE
                         : (ch.getTeam().isPresent() ? ch.getTeam().get().getId() : null),
                 System.currentTimeMillis(),
-                expiry
+                expiry,
+                true // TODO: RDM?
         ));
         ch.getRound().getMetadata().set(MetadataKey.Round.BODY_LIST, bodies);
         ch.getMetadata().set(MetadataKey.Player.BODY, body);

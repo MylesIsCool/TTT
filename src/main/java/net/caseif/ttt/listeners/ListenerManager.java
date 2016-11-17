@@ -35,6 +35,7 @@ import net.caseif.ttt.listeners.wizard.WizardListener;
 import net.caseif.ttt.listeners.world.BlockListener;
 import net.caseif.ttt.listeners.world.EntityListener;
 
+import net.caseif.ttt.util.shop.ShopHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
@@ -59,13 +60,16 @@ public class ListenerManager {
 
         // register wizard listener
         registerListener(new WizardListener());
+
+        // Register items
+        ShopHelper.registerItemListeners();
     }
 
     public static void registerSpecialEventListeners() {
         registerListener(new SpecialPlayerListener());
     }
 
-    private static void registerListener(Listener listener) {
+    public static void registerListener(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, TTTCore.getPlugin());
     }
 
