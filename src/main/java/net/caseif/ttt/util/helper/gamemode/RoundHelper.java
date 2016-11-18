@@ -117,8 +117,6 @@ public final class RoundHelper {
                             .withPrefix(Color.TRAITOR).sendTo(pl);
                     TTTCore.locale.getLocalizable("info.personal.status.role.traitor.allies")
                             .withPrefix(Color.TRAITOR).sendTo(pl);
-                    ch.getMetadata().set(ShopHelper.TOKEN_KEY, 2);
-                    pl.sendMessage(ChatColor.GRAY + "You have started the game with 2 tokens, spend it on the shop /ttt shop. You can earn tokens by opening body chests.");
                     for (Challenger traitor : ch.getTeam().get().getChallengers()) {
                         if (traitor != ch) { // don't list them as an ally to themselves
                             pl.sendMessage(Color.TRAITOR + "- " + traitor.getName());
@@ -128,6 +126,8 @@ public final class RoundHelper {
                     TTTCore.locale.getLocalizable("info.personal.status.role.traitor.alone")
                             .withPrefix(Color.TRAITOR).sendTo(pl);
                 }
+                ch.getMetadata().set(ShopHelper.TOKEN_KEY, 2);
+                pl.sendMessage(ChatColor.GRAY + "You have started the game with 2 tokens, spend it on the shop /ttt shop. You can earn tokens by opening body chests.");
                 TitleHelper.sendStatusTitle(pl, Role.TRAITOR);
             }
 

@@ -148,6 +148,7 @@ public final class KarmaHelper {
     }
 
     public static void applyDamageKarma(Challenger damager, Challenger victim, double damage) {
+        if(damager.getUniqueId().equals(victim.getUniqueId())) return;
         if (isTraitor(damager) == isTraitor(victim)) { // team damage
             subtractKarma(damager, getDamagePenalty(damage, getKarma(victim)));
         } else if (!isTraitor(damager)) { // isTraitor(victim) is implicitly true - innocent damaging traitor
@@ -156,6 +157,7 @@ public final class KarmaHelper {
     }
 
     public static void applyKillKarma(Challenger killer, Challenger victim) {
+        if(killer.getUniqueId().equals(victim.getUniqueId())) return;
         if (isTraitor(killer) == isTraitor(victim)) { // team kill
             subtractKarma(killer, getKillPenalty(getKarma(victim)));
         } else if (!isTraitor(killer)) { // isTraitor(victim) is implicitly true - innocent damaging traitor

@@ -53,7 +53,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
  */
 public class PlayerUpdateListener implements Listener {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
         new DeathHelper(event).handleEvent();
     }
@@ -75,7 +75,7 @@ public class PlayerUpdateListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntityType() == EntityType.PLAYER) {
             Optional<Challenger> victim = TTTCore.mg.getChallenger(event.getEntity().getUniqueId());

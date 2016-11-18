@@ -34,6 +34,7 @@ import net.caseif.ttt.util.helper.gamemode.RoleHelper;
 import net.caseif.ttt.util.shop.items.Item;
 import net.caseif.ttt.util.shop.items.detective.BodyArmourItem;
 import net.caseif.ttt.util.shop.items.traitor.DisguisedGun;
+import net.caseif.ttt.util.shop.items.traitor.Jihad;
 import net.caseif.ttt.util.shop.items.traitor.OneHitKillKnifeItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -55,7 +56,7 @@ import java.util.List;
  */
 public final class ShopHelper {
     public static Item[] DETECTIVE_ITEMS = {new BodyArmourItem()};
-    public static Item[] TRAITOR_ITEMS = {new OneHitKillKnifeItem(), new DisguisedGun()};
+    public static Item[] TRAITOR_ITEMS = {new OneHitKillKnifeItem(), new DisguisedGun(), new Jihad()};
     public static final String TOKEN_KEY = "tokens";
     public static final String ITEMS_KEY = "bought_items";
 

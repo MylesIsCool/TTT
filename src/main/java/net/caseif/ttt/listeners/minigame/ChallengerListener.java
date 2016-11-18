@@ -65,6 +65,8 @@ public class ChallengerListener {
         }
 
         Player pl = Bukkit.getPlayer(event.getChallenger().getUniqueId());
+        pl.setWalkSpeed(0.2f);
+        pl.setInvulnerable(false);
         pl.setHealth(pl.getMaxHealth());
         pl.setCompassTarget(Bukkit.getWorlds().get(1).getSpawnLocation());
 

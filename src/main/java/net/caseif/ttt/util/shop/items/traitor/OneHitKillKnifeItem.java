@@ -52,7 +52,7 @@ public class OneHitKillKnifeItem extends Item implements Listener {
 
     @Override
     public int getCost() {
-        return 1;
+        return 2;
     }
 
     @Override
