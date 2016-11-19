@@ -32,6 +32,7 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -55,7 +56,7 @@ public class LauncherGun extends Item implements Listener {
 
     @Override
     public int getCost() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -65,18 +66,20 @@ public class LauncherGun extends Item implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(PlayerInteractEvent event) {
-        if (isValid(event.getPlayer())) {
-            if (isHolding(event.getPlayer(), ChatColor.WHITE + "Launching Gun")) {
-                Snowball snowball = event.getPlayer().launchProjectile(Snowball.class);
-                snowball.setMetadata("blast", new FixedMetadataValue(TTTCore.getPlugin(), true));
+        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if (isValid(event.getPlayer())) {
+                if (isHolding(event.getPlayer(), ChatColor.WHITE + "Launching Gun")) {
+                    Snowball snowball = event.getPlayer().launchProjectile(Snowball.class);
+                    snowball.setMetadata("blast", new FixedMetadataValue(TTTCore.getPlugin(), true));
+                }
             }
         }
     }
 
     @EventHandler
-    public void onDmg(EntityDamageByEntityEvent event){
-        if(event.getDamager() instanceof Snowball){
-            if(event.getDamager().hasMetadata("blast")){
+    public void onDmg(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Snowball) {
+            if (event.getDamager().hasMetadata("blast")) {
                 // Launch player
                 double knockback = 5;
                 Vector vector = event.getDamager().getVelocity();

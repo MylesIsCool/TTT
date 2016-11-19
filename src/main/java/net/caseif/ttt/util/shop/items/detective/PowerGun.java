@@ -36,6 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -68,18 +69,20 @@ public class PowerGun extends Item implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(PlayerInteractEvent event) {
-        if (isValid(event.getPlayer())) {
-            if (isHolding(event.getPlayer(), ChatColor.WHITE + "Better Gun")) {
-                if (event.getPlayer().getInventory().contains(Material.ARROW)
-                        || !TTTCore.config.get(ConfigKey.REQUIRE_AMMO_FOR_GUNS)) {
-                    if (TTTCore.config.get(ConfigKey.REQUIRE_AMMO_FOR_GUNS)) {
-                        InventoryHelper.removeArrow(event.getPlayer().getInventory());
-                        event.getPlayer().updateInventory();
+        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
+            if (isValid(event.getPlayer())) {
+                if (isHolding(event.getPlayer(), ChatColor.WHITE + "Better Gun")) {
+                    if (event.getPlayer().getInventory().contains(Material.ARROW)
+                            || !TTTCore.config.get(ConfigKey.REQUIRE_AMMO_FOR_GUNS)) {
+                        if (TTTCore.config.get(ConfigKey.REQUIRE_AMMO_FOR_GUNS)) {
+                            InventoryHelper.removeArrow(event.getPlayer().getInventory());
+                            event.getPlayer().updateInventory();
+                        }
+                        event.getPlayer().launchProjectile(Arrow.class).setMetadata("better", new FixedMetadataValue(TTTCore.getPlugin(), true));
+                    } else {
+                        TTTCore.locale.getLocalizable("info.personal.status.no-ammo")
+                                .withPrefix(Color.ALERT).sendTo(event.getPlayer());
                     }
-                    event.getPlayer().launchProjectile(Arrow.class).setMetadata("better", new FixedMetadataValue(TTTCore.getPlugin(), true));
-                } else {
-                    TTTCore.locale.getLocalizable("info.personal.status.no-ammo")
-                            .withPrefix(Color.ALERT).sendTo(event.getPlayer());
                 }
             }
         }

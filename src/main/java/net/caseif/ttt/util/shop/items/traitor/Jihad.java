@@ -71,11 +71,14 @@ public class Jihad extends Item implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(PlayerInteractEvent event) {
-        if (isValid(event.getPlayer())) {
-            if (isHolding(event.getPlayer(), ChatColor.WHITE + "Jihad Bomb")) {
-                if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
-                    event.getPlayer().setItemInHand(null);
-                    activateJihad(event.getPlayer());
+        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK ||
+                event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
+            if (isValid(event.getPlayer())) {
+                if (isHolding(event.getPlayer(), ChatColor.WHITE + "Jihad Bomb")) {
+                    if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
+                        event.getPlayer().setItemInHand(null);
+                        activateJihad(event.getPlayer());
+                    }
                 }
             }
         }
