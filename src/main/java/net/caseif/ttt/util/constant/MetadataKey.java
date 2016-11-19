@@ -47,6 +47,7 @@ public class MetadataKey {
         public static final String WATCH_GAME_MODE = "watchGm";
         public static final String PURE_SPECTATOR = "pureSpectator";
         public static final String TEAM_NAME = "teamName";
+        public static final String TEAM_NAME_TRAITOR = "teamNameTraitor";
         public static final String SEARCHING_BODY = "searchingBody";
 
         private Player() {

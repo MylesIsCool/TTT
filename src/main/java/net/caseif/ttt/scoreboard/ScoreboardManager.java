@@ -24,26 +24,23 @@
 
 package net.caseif.ttt.scoreboard;
 
-import static net.caseif.ttt.util.helper.data.DataVerificationHelper.fromNullableString;
-
-import net.caseif.ttt.TTTCore;
-import net.caseif.ttt.util.constant.AliveStatus;
-import net.caseif.ttt.util.constant.Color;
-import net.caseif.ttt.util.constant.MetadataKey;
-import net.caseif.ttt.util.constant.Role;
-import net.caseif.ttt.util.constant.Stage;
-import net.caseif.ttt.util.helper.gamemode.RoleHelper;
-import net.caseif.ttt.util.helper.gamemode.RoundHelper;
-
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import net.caseif.flint.challenger.Challenger;
 import net.caseif.flint.round.Round;
+import net.caseif.ttt.TTTCore;
+import net.caseif.ttt.util.Body;
+import net.caseif.ttt.util.constant.*;
+import net.caseif.ttt.util.helper.gamemode.RoleHelper;
+import net.caseif.ttt.util.helper.gamemode.RoundHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+
+import static net.caseif.ttt.util.helper.data.DataVerificationHelper.fromNullableString;
 
 public class ScoreboardManager {
 
@@ -117,14 +114,40 @@ public class ScoreboardManager {
     }
 
     private void applyTeam(Challenger ch) {
-        String role = RoleHelper.isTraitor(ch) ? Role.TRAITOR
-                : ch.getMetadata().containsKey(Role.DETECTIVE) ? Role.DETECTIVE
-                : Role.INNOCENT;
-        String alive = !ch.isSpectating() ? AliveStatus.ALIVE
-                : ch.getMetadata().containsKey(MetadataKey.Player.BODY_FOUND) ? AliveStatus.CONFIRMED_DEAD
-                : AliveStatus.MIA;
-        String teamName = role.charAt(0) + "" + alive.charAt(0);
-        ch.getMetadata().set(MetadataKey.Player.TEAM_NAME, teamName);
+        {
+            String role = RoleHelper.isTraitor(ch) ? Role.TRAITOR
+                    : ch.getMetadata().containsKey(Role.DETECTIVE) ? Role.DETECTIVE
+                    : Role.INNOCENT;
+            boolean traitorFound = false;
+            if (ch.isSpectating() && !ch.getMetadata().containsKey(MetadataKey.Player.BODY_FOUND)) {
+                if(ch.getMetadata().get(MetadataKey.Player.BODY).isPresent()){
+                    Body body = (Body) ch.getMetadata().get(MetadataKey.Player.BODY).get();
+                    if(body.getKiller().isPresent()){
+                        Optional<Challenger> challengerOptional = ch.getRound().getArena().getMinigame().getChallenger(body.getKiller().get());
+                        if(challengerOptional.isPresent()){
+                            if(challengerOptional.get().getMetadata().containsKey(MetadataKey.Player.BODY_FOUND)) {
+                                traitorFound = true;
+                            }
+                        }
+                    }
+                }
+            }
+            String alive = !ch.isSpectating() ? (AliveStatus.ALIVE)
+                    : ch.getMetadata().containsKey(MetadataKey.Player.BODY_FOUND) ? AliveStatus.CONFIRMED_DEAD
+                    : (traitorFound ? AliveStatus.MIA : AliveStatus.ALIVE);
+            String teamName = role.charAt(0) + "" + alive.charAt(0);
+            ch.getMetadata().set(MetadataKey.Player.TEAM_NAME, teamName);
+        }
+        {
+            String role = RoleHelper.isTraitor(ch) ? Role.TRAITOR
+                    : ch.getMetadata().containsKey(Role.DETECTIVE) ? Role.DETECTIVE
+                    : Role.INNOCENT;
+            String alive = !ch.isSpectating() ? (AliveStatus.ALIVE)
+                    : ch.getMetadata().containsKey(MetadataKey.Player.BODY_FOUND) ? AliveStatus.CONFIRMED_DEAD
+                    : AliveStatus.MIA;
+            String teamName = role.charAt(0) + "" + alive.charAt(0);
+            ch.getMetadata().set(MetadataKey.Player.TEAM_NAME_TRAITOR, teamName);
+        }
     }
 
     public void applyScoreboard(Challenger ch) {
@@ -138,14 +161,15 @@ public class ScoreboardManager {
     }
 
     @SuppressWarnings("deprecation")
-    private void updateEntry(Challenger ch, Scoreboard sb) {
+    private void updateEntry(Challenger ch, Scoreboard sb, boolean traitor) {
         assert ch.getRound() == getRound();
 
         if (ch.getMetadata().has(MetadataKey.Player.PURE_SPECTATOR)) {
             return;
         }
 
-        String teamName = ch.getMetadata().<String>get(MetadataKey.Player.TEAM_NAME).get();
+        String teamName = traitor ? ch.getMetadata().<String>get(MetadataKey.Player.TEAM_NAME_TRAITOR).get() : ch.getMetadata().<String>get(MetadataKey.Player.TEAM_NAME).get();
+
         if (sb.getTeam(teamName) == null) {
             registerTeams(sb, sb == tBoard);
         }
@@ -171,8 +195,8 @@ public class ScoreboardManager {
 
     public void updateEntry(Challenger ch) {
         applyTeam(ch);
-        updateEntry(ch, getInnocentBoard());
-        updateEntry(ch, getTraitorBoard());
+        updateEntry(ch, getInnocentBoard(), false);
+        updateEntry(ch, getTraitorBoard(), true);
     }
 
     private void remove(Challenger ch, Scoreboard sm) {

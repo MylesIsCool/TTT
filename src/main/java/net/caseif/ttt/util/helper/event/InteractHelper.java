@@ -137,7 +137,7 @@ public final class InteractHelper {
 
                     ScoreboardManager sm = body.getRound().getMetadata()
                             .<ScoreboardManager>get(MetadataKey.Round.SCOREBOARD_MANAGER).get();
-                    sm.updateEntry(bodyPlayer.get());
+                    sm.updateAllEntries();
                 }
 
                 Localizable loc = TTTCore.locale.getLocalizable("info.global.round.event.body-find").withPrefix(color);
