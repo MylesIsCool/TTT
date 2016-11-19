@@ -151,7 +151,7 @@ public class Jihad extends Item implements Listener {
                                 TNTPrimed tnt = player.getWorld().spawn(
                                         player.getLocation(), TNTPrimed.class);
                                 tnt.setFuseTicks(5);
-                                tnt.setYield(2f);
+                                tnt.setYield(3.5f);
                                 tnt.setIsIncendiary(false);
                                 tnt.setMetadata("ttt", new FixedMetadataValue(TTTCore.getPlugin(), player.getUniqueId()));
                             }

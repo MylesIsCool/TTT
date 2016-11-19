@@ -31,6 +31,8 @@ import com.google.common.base.Optional;
 import net.caseif.flint.round.Round;
 import net.caseif.flint.util.physical.Location3D;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Body {
@@ -44,11 +46,11 @@ public class Body {
     private final long deathTime;
     private final long expiry;
 
-    private boolean token;
-    private boolean found;
+    private boolean found = false;
+    private List<UUID> tokens = new ArrayList<>();
 
     public Body(Round round, Location3D location, UUID player, String name, UUID killer, String role, long deathTime,
-                long expireTime, boolean token) {
+                long expireTime) {
         this.round = round;
         this.location = location;
         this.player = player;
@@ -57,7 +59,6 @@ public class Body {
         this.role = role != null ? role : Role.INNOCENT;
         this.deathTime = deathTime;
         this.expiry = expireTime;
-        this.token = token;
     }
 
     public Round getRound() {
@@ -100,13 +101,10 @@ public class Body {
         found = true;
     }
 
-    public boolean isToken() {
-        return token;
+    public List<UUID> getTokens() {
+        return tokens;
     }
 
-    public void setToken(boolean token) {
-        this.token = token;
-    }
     @Override
     public int hashCode() {
         return Objects.hashCode(round, location, player, name, killer, role, expiry);

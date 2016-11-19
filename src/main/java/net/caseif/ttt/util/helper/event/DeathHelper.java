@@ -201,9 +201,7 @@ public final class DeathHelper {
                         ? Role.DETECTIVE
                         : (ch.getTeam().isPresent() ? ch.getTeam().get().getId() : null),
                 System.currentTimeMillis(),
-                expiry,
-                true // TODO: RDM?
-        ));
+                expiry));
         ch.getRound().getMetadata().set(MetadataKey.Round.BODY_LIST, bodies);
         ch.getMetadata().set(MetadataKey.Player.BODY, body);
     }

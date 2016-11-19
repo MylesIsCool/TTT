@@ -196,8 +196,8 @@ public final class InteractHelper {
             return;
         }
 
-        if (event.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-                .endsWith(TTTCore.locale.getLocalizable("item.gun.name").localize())) {
+        if (ChatColor.stripColor(event.getPlayer().getItemInHand().getItemMeta().getDisplayName())
+                .equalsIgnoreCase(TTTCore.locale.getLocalizable("item.gun.name").localize())) {
 
             Optional<Challenger> ch = TTTCore.mg.getChallenger(event.getPlayer().getUniqueId());
             if (!ch.isPresent() || ch.get().isSpectating()
@@ -225,27 +225,29 @@ public final class InteractHelper {
         Inventory inv = Bukkit.createInventory(player, size);
 
         // give token
-        if (body.isToken()) {
+        if (!body.getTokens().contains(player.getUniqueId())) {
             Optional<Challenger> challengerOptional = TTTCore.getInstance().mg.getChallenger(player.getUniqueId());
             if (challengerOptional.isPresent()) {
-                boolean traitor = false;
-                Optional<Challenger> killer = TTTCore.getInstance().mg.getChallenger(body.getPlayer());
-                if (RoleHelper.isTraitor(killer.get())) {
-                    traitor = true;
-                }
-                if (RoleHelper.isTraitor(challengerOptional.get()) && !traitor) {
-                    // Pick up token
-                    body.setToken(false);
-                    int tokens = ShopHelper.getTokens(challengerOptional.get());
-                    challengerOptional.get().getMetadata().set(ShopHelper.TOKEN_KEY, tokens + 1);
-                    player.sendMessage(ChatColor.GRAY + "You have picked up a token from this body, spend it on the shop /ttt shop");
-                } else {
-                    // If detective & traitor then :)
-                    if (challengerOptional.get().getMetadata().get(Role.DETECTIVE).isPresent()) {
-                        body.setToken(false);
+                if (ShopHelper.isAlive(challengerOptional.get())) {
+                    boolean traitor = false;
+                    Optional<Challenger> killer = TTTCore.getInstance().mg.getChallenger(body.getPlayer());
+                    if (RoleHelper.isTraitor(killer.get())) {
+                        traitor = true;
+                    }
+                    if (RoleHelper.isTraitor(challengerOptional.get()) && !traitor) {
+                        // Pick up token
+                        body.getTokens().add(player.getUniqueId());
                         int tokens = ShopHelper.getTokens(challengerOptional.get());
                         challengerOptional.get().getMetadata().set(ShopHelper.TOKEN_KEY, tokens + 1);
                         player.sendMessage(ChatColor.GRAY + "You have picked up a token from this body, spend it on the shop /ttt shop");
+                    } else {
+                        // If detective & traitor then :)
+                        if (challengerOptional.get().getMetadata().get(Role.DETECTIVE).isPresent()) {
+                            body.getTokens().add(player.getUniqueId());
+                            int tokens = ShopHelper.getTokens(challengerOptional.get());
+                            challengerOptional.get().getMetadata().set(ShopHelper.TOKEN_KEY, tokens + 1);
+                            player.sendMessage(ChatColor.GRAY + "You have picked up a token from this body, spend it on the shop /ttt shop");
+                        }
                     }
                 }
             }

@@ -32,7 +32,10 @@ import net.caseif.ttt.util.constant.MetadataKey;
 import net.caseif.ttt.util.constant.Role;
 import net.caseif.ttt.util.helper.gamemode.RoleHelper;
 import net.caseif.ttt.util.shop.items.Item;
+import net.caseif.ttt.util.shop.items.LauncherGun;
 import net.caseif.ttt.util.shop.items.detective.BodyArmourItem;
+import net.caseif.ttt.util.shop.items.detective.PowerGun;
+import net.caseif.ttt.util.shop.items.traitor.ChestTrap;
 import net.caseif.ttt.util.shop.items.traitor.DisguisedGun;
 import net.caseif.ttt.util.shop.items.traitor.Jihad;
 import net.caseif.ttt.util.shop.items.traitor.OneHitKillKnifeItem;
@@ -55,11 +58,14 @@ import java.util.List;
  * Static utility class for role-related functionality.
  */
 public final class ShopHelper {
-    public static Item[] DETECTIVE_ITEMS = {new BodyArmourItem()};
-    public static Item[] TRAITOR_ITEMS = {new OneHitKillKnifeItem(), new DisguisedGun(), new Jihad()};
+    public static Item[] DETECTIVE_ITEMS = {new BodyArmourItem(), new PowerGun()};
+    public static Item[] TRAITOR_ITEMS = {new OneHitKillKnifeItem(), new DisguisedGun(), new Jihad(), new ChestTrap()};
+    public static Item[] BOTH_ITEMS = {new LauncherGun()};
     public static final String TOKEN_KEY = "tokens";
     public static final String ITEMS_KEY = "bought_items";
 
+    // Traitor Helmet - glow
+    // Aimbot gun
     private ShopHelper() {
     }
 
@@ -97,7 +103,10 @@ public final class ShopHelper {
         // Get bought items
         List<Integer> bought = (List<Integer>) (challengerOptional.get().getMetadata().get(ITEMS_KEY).isPresent() ? challengerOptional.get().getMetadata().get(ITEMS_KEY).get() : Arrays.asList());
         // Add items
-        Item[] items = traitorShop ? TRAITOR_ITEMS : DETECTIVE_ITEMS;
+        List<Item> items = new ArrayList<>();
+        items.addAll(Arrays.asList(BOTH_ITEMS));
+        items.addAll(Arrays.asList(traitorShop ? TRAITOR_ITEMS : DETECTIVE_ITEMS));
+
         int i = 0;
         for (Item item : items) {
             if (bought.contains(item.getId())) continue;
@@ -161,7 +170,9 @@ public final class ShopHelper {
 
                     List<Integer> list = new ArrayList<>();
                     if (challengerOptional.get().getMetadata().get(ITEMS_KEY).isPresent()) {
-                        list = (List<Integer>) challengerOptional.get().getMetadata().get(ITEMS_KEY);
+                        if (challengerOptional.get().getMetadata().get(ITEMS_KEY).get() instanceof List) {
+                            list = (List<Integer>) challengerOptional.get().getMetadata().get(ITEMS_KEY).get();
+                        }
                     }
                     list.add(item.get().getId());
                     challengerOptional.get().getMetadata().set(ITEMS_KEY, list);
@@ -201,6 +212,10 @@ public final class ShopHelper {
             if (item.getId() == id)
                 return Optional.of(item);
         }
+        for (Item item : BOTH_ITEMS) {
+            if (item.getId() == id)
+                return Optional.of(item);
+        }
         return null;
     }
 
@@ -215,6 +230,11 @@ public final class ShopHelper {
             }
         }
         for (Item item : TRAITOR_ITEMS) {
+            if (item instanceof Listener) {
+                ListenerManager.registerListener((Listener) item);
+            }
+        }
+        for (Item item : BOTH_ITEMS) {
             if (item instanceof Listener) {
                 ListenerManager.registerListener((Listener) item);
             }
