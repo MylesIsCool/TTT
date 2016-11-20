@@ -96,7 +96,7 @@ public class Drag {
             if (getRound().getLifecycleStage() == Stage.PLAYING) {
                 // if game running?
                 Location loc = location.clone();
-                loc = resolve(loc);
+                loc = resolve(loc).getBlock().getLocation();
                 round.getArena().markForRollback(LocationHelper.convert(loc));
                 location.getBlock().setType(Material.PISTON_BASE);
                 location.getBlock().setData((byte) 1);

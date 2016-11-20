@@ -31,6 +31,7 @@ import net.caseif.ttt.listeners.world.ListenerManager;
 import net.caseif.ttt.util.constant.MetadataKey;
 import net.caseif.ttt.util.constant.Role;
 import net.caseif.ttt.util.helper.gamemode.RoleHelper;
+import net.caseif.ttt.util.shop.items.DeflectorItem;
 import net.caseif.ttt.util.shop.items.Item;
 import net.caseif.ttt.util.shop.items.LauncherGun;
 import net.caseif.ttt.util.shop.items.detective.BodyArmourItem;
@@ -60,17 +61,17 @@ import java.util.List;
 public final class ShopHelper {
     public static Item[] DETECTIVE_ITEMS = {new BodyArmourItem(), new PowerGun()};
     public static Item[] TRAITOR_ITEMS = {new OneHitKillKnifeItem(), new DisguisedGun(), new Jihad(), new ChestTrap()};
-    public static Item[] BOTH_ITEMS = {new LauncherGun()};
+    public static Item[] BOTH_ITEMS = {new LauncherGun(), new DeflectorItem()};
     public static final String TOKEN_KEY = "tokens";
     public static final String ITEMS_KEY = "bought_items";
 
     // Traitor Helmet - glow
     // Aimbot gun
-    // Chests can be dragged (to move bodies!)
     // C4
     // Health Stations (possibly remove current regen?)
     // Maybe displaying health under a name?
     // Smoke grenades - use potions, emits blindness
+    // Radio controlled arrow? fire from other people
     private ShopHelper() {
     }
 
