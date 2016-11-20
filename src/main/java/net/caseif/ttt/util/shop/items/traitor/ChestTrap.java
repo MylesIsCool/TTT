@@ -47,9 +47,9 @@ import java.util.Arrays;
 public class ChestTrap extends Item implements Listener {
     @Override
     public ItemStack getIcon() {
-        ItemStack stack = new ItemStack(Material.CHEST);
+        ItemStack stack = new ItemStack(Material.PISTON_BASE);
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(ChatColor.WHITE + "Trapped Chest");
+        meta.setDisplayName(ChatColor.WHITE + "Trapped Casket");
         meta.setLore(Arrays.asList(ChatColor.WHITE + "Whoever opens it, dies."));
 
         stack.setItemMeta(meta);
@@ -69,7 +69,7 @@ public class ChestTrap extends Item implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onPlace(final BlockPlaceEvent event) {
         if (isValid(event.getPlayer())) {
-            if (isHolding(event.getPlayer(), ChatColor.WHITE + "Trapped Chest")) {
+            if (isHolding(event.getPlayer(), ChatColor.WHITE + "Trapped Casket")) {
                 BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.SOUTH};
                 for (BlockFace face : faces) {
                     if (event.getBlock().getRelative(face) != null) {
@@ -89,7 +89,8 @@ public class ChestTrap extends Item implements Listener {
                     @Override
                     public void run() {
                         TTTCore.getInstance().mg.getChallenger(event.getPlayer().getUniqueId()).get().getRound().getArena().markForRollback(LocationHelper.convert(loc));
-                        loc.getBlock().setType(Material.CHEST);
+                        loc.getBlock().setType(Material.PISTON_BASE);
+                        loc.getBlock().setData((byte) 1);
                         event.getPlayer().sendMessage(ChatColor.RED + "Your trap has been placed... don't open it!");
                         loc.getBlock().setMetadata("traitor", new FixedMetadataValue(TTTCore.getPlugin(), event.getPlayer()));
                     }

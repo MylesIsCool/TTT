@@ -45,10 +45,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static net.caseif.ttt.util.helper.gamemode.RoleHelper.isTraitor;
@@ -163,19 +162,13 @@ public final class DeathHelper {
                     : loc.getZ();
             loc = new Location(loc.getWorld(), x, y, z);
         }
-        loc.getBlock().setType(((loc.getBlockX() + loc.getBlockY()) % 2 == 0)
-                ? Material.TRAPPED_CHEST
-                : Material.CHEST);
+        loc.getBlock().setType(Material.PISTON_BASE);
+        loc.getBlock().setData((byte) 1);
 
-        storeBody(loc, ch, killer);
+        storeBody(loc.getBlock(), ch, killer);
     }
 
-    private void storeBody(Location loc, Challenger ch, Challenger killer) {
-        List<Body> bodies = ch.getRound().getMetadata().<List<Body>>get(MetadataKey.Round.BODY_LIST).orNull();
-        if (bodies == null) {
-            bodies = new ArrayList<>();
-        }
-
+    private void storeBody(Block block, Challenger ch, Challenger killer) {
         long expiry = -1;
         if (killer != null) {
             double dist = player.getLocation().toVector()
@@ -190,10 +183,9 @@ public final class DeathHelper {
             }
         }
 
-        Body body;
-        bodies.add(body = new Body(
+        Body body = new Body(
                 ch.getRound(),
-                LocationHelper.convert(loc),
+                LocationHelper.convert(block.getLocation()),
                 ch.getUniqueId(),
                 ch.getName(),
                 killer != null ? killer.getUniqueId() : null,
@@ -201,8 +193,8 @@ public final class DeathHelper {
                         ? Role.DETECTIVE
                         : (ch.getTeam().isPresent() ? ch.getTeam().get().getId() : null),
                 System.currentTimeMillis(),
-                expiry));
-        ch.getRound().getMetadata().set(MetadataKey.Round.BODY_LIST, bodies);
+                expiry);
+        block.setMetadata("body", new FixedMetadataValue(TTTCore.getPlugin(), body));
         ch.getMetadata().set(MetadataKey.Player.BODY, body);
     }
 

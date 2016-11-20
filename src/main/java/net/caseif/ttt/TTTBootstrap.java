@@ -30,7 +30,7 @@ import static net.caseif.ttt.util.constant.PluginInfo.STEEL_CURSEFORGE_PROJECT_I
 import static net.caseif.ttt.util.constant.PluginInfo.TTT_CURSEFORGE_PROJECT_ID;
 
 import net.caseif.ttt.command.SpecialCommandManager;
-import net.caseif.ttt.listeners.ListenerManager;
+import net.caseif.ttt.listeners.world.ListenerManager;
 import net.caseif.ttt.util.FreshUpdater;
 
 import net.caseif.rosetta.LocaleManager;

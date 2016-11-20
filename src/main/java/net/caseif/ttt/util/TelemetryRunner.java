@@ -79,28 +79,29 @@ public class TelemetryRunner implements Runnable {
     }
 
     private static boolean shouldRun() {
-        try {
-            File tsFile = new File(TTTCore.getPlugin().getDataFolder(), TIMESTAMP_FILE_NAME);
-            if (!tsFile.exists()) {
-                writeRunTime();
-                return false;
-            }
-
-            byte[] bytes = new byte[8];
-            try (FileInputStream is = new FileInputStream(tsFile)) {
-                int readBytes = is.read(bytes);
-                if (readBytes < 8) {
-                    TTTCore.log.warning("Telemetry timestamp file is malformed - regenerating");
-                    Files.delete(tsFile.toPath());
-                    writeRunTime();
-                    return false;
-                }
-                long timestamp = ByteHelper.bytesToLong(bytes);
-                return (System.currentTimeMillis() - timestamp) / 1000 >= SECONDS_PER_DAY;
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException("Failed to read timestamp file - not submitting telemetry data", ex);
-        }
+        return false;
+//        try {
+//            File tsFile = new File(TTTCore.getPlugin().getDataFolder(), TIMESTAMP_FILE_NAME);
+//            if (!tsFile.exists()) {
+//                writeRunTime();
+//                return false;
+//            }
+//
+//            byte[] bytes = new byte[8];
+//            try (FileInputStream is = new FileInputStream(tsFile)) {
+//                int readBytes = is.read(bytes);
+//                if (readBytes < 8) {
+//                    TTTCore.log.warning("Telemetry timestamp file is malformed - regenerating");
+//                    Files.delete(tsFile.toPath());
+//                    writeRunTime();
+//                    return false;
+//                }
+//                long timestamp = ByteHelper.bytesToLong(bytes);
+//                return (System.currentTimeMillis() - timestamp) / 1000 >= SECONDS_PER_DAY;
+//            }
+//        } catch (IOException ex) {
+//            throw new RuntimeException("Failed to read timestamp file - not submitting telemetry data", ex);
+//        }
     }
 
     private static void writeRunTime() throws IOException {

@@ -27,11 +27,10 @@ package net.caseif.ttt.listeners.world;
 import net.caseif.flint.arena.Arena;
 import net.caseif.ttt.TTTCore;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 
 /**
  * Listener for block events.
@@ -42,6 +41,34 @@ public class BlockListener implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         if (TTTCore.mg.getChallenger(event.getPlayer().getUniqueId()).isPresent()) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onExtend(BlockPistonExtendEvent event) {
+        if (event.getBlock().hasMetadata("body")) {
+            event.setCancelled(true);
+            return;
+        }
+        for (Block block : event.getBlocks()) {
+            if (block.hasMetadata("body")) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onExtend(BlockPistonRetractEvent event) {
+        if (event.getBlock().hasMetadata("body")) {
+            event.setCancelled(true);
+            return;
+        }
+        for (Block block : event.getBlocks()) {
+            if (block.hasMetadata("body")) {
+                event.setCancelled(true);
+                return;
+            }
         }
     }
 

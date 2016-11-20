@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package net.caseif.ttt.listeners;
+package net.caseif.ttt.listeners.world;
 
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.listeners.minigame.ChallengerListener;
@@ -32,8 +32,6 @@ import net.caseif.ttt.listeners.player.PlayerInteractListener;
 import net.caseif.ttt.listeners.player.PlayerUpdateListener;
 import net.caseif.ttt.listeners.player.SpecialPlayerListener;
 import net.caseif.ttt.listeners.wizard.WizardListener;
-import net.caseif.ttt.listeners.world.BlockListener;
-import net.caseif.ttt.listeners.world.EntityListener;
 
 import net.caseif.ttt.util.shop.ShopHelper;
 import org.bukkit.Bukkit;
@@ -60,6 +58,10 @@ public class ListenerManager {
 
         // register wizard listener
         registerListener(new WizardListener());
+        // body
+        BodyDragListener bdl = new BodyDragListener();
+        registerListener(bdl);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(TTTCore.getPlugin(), bdl, 20L, 20L);
 
         // Register items
         ShopHelper.registerItemListeners();

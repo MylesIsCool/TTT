@@ -27,7 +27,7 @@ package net.caseif.ttt.util.shop;
 import com.google.common.base.Optional;
 import net.caseif.flint.challenger.Challenger;
 import net.caseif.ttt.TTTCore;
-import net.caseif.ttt.listeners.ListenerManager;
+import net.caseif.ttt.listeners.world.ListenerManager;
 import net.caseif.ttt.util.constant.MetadataKey;
 import net.caseif.ttt.util.constant.Role;
 import net.caseif.ttt.util.helper.gamemode.RoleHelper;
@@ -66,7 +66,20 @@ public final class ShopHelper {
 
     // Traitor Helmet - glow
     // Aimbot gun
+    // Chests can be dragged (to move bodies!)
+    // C4
+    // Health Stations (possibly remove current regen?)
+    // Maybe displaying health under a name?
+    // Smoke grenades - use potions, emits blindness
     private ShopHelper() {
+    }
+
+    public static boolean isAlive(Player player) {
+        Optional<Challenger> challengerOptional = TTTCore.getInstance().mg.getChallenger(player.getUniqueId());
+        if (challengerOptional.isPresent()) {
+            return isAlive(challengerOptional.get());
+        }
+        return false;
     }
 
     public static boolean isAlive(Challenger player) {

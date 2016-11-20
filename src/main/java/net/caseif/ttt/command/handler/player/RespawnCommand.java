@@ -24,6 +24,9 @@
 
 package net.caseif.ttt.command.handler.player;
 
+import com.google.common.base.Optional;
+import net.caseif.flint.challenger.Challenger;
+import net.caseif.flint.metadata.Metadata;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.command.handler.CommandHandler;
 import net.caseif.ttt.scoreboard.ScoreboardManager;
@@ -32,17 +35,11 @@ import net.caseif.ttt.util.constant.Color;
 import net.caseif.ttt.util.constant.MetadataKey;
 import net.caseif.ttt.util.helper.gamemode.RoundHelper;
 import net.caseif.ttt.util.helper.platform.LocationHelper;
-
-import com.google.common.base.Optional;
-import net.caseif.flint.challenger.Challenger;
-import net.caseif.flint.metadata.Metadata;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class RespawnCommand extends CommandHandler {
 
@@ -75,18 +72,12 @@ public class RespawnCommand extends CommandHandler {
 
         Location loc
                 = LocationHelper.convert(ch.get().getMetadata().<Body>get(MetadataKey.Player.BODY).get().getLocation());
-        loc.getBlock().setType(Material.AIR);
+//        loc.getBlock().setType(Material.AIR);
         pl.teleport(loc);
 
         Metadata meta = ch.get().getMetadata();
-        Body body = meta.<Body>get(MetadataKey.Player.BODY).orNull();
         meta.remove(MetadataKey.Player.BODY);
         meta.remove(MetadataKey.Player.BODY_FOUND);
-        if (body != null) {
-            List<Body> bodies = ch.get().getRound().getMetadata().<List<Body>>get(MetadataKey.Round.BODY_LIST).get();
-            bodies.remove(body);
-            ch.get().getRound().getMetadata().set(MetadataKey.Round.BODY_LIST, bodies);
-        }
 
         ch.get().setSpectating(false);
 

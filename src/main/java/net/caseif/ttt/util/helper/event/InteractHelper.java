@@ -43,9 +43,10 @@ import net.caseif.ttt.util.shop.ShopHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Chest;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -74,80 +75,73 @@ public final class InteractHelper {
                 event.getClickedBlock().getX(),
                 event.getClickedBlock().getY(),
                 event.getClickedBlock().getZ());
-        if (!(event.getClickedBlock().getType() == Material.CHEST
-                || event.getClickedBlock().getType() == Material.TRAPPED_CHEST)) {
+        if (!(event.getClickedBlock().getType() == Material.PISTON_BASE)) {
             return;
         }
+        if (event.getPlayer().isSneaking()) return;
 
-        List<Body> bodies = opener.getRound().getMetadata().<List<Body>>get(MetadataKey.Round.BODY_LIST).orNull();
-        if (bodies == null) {
+        if (!event.getClickedBlock().hasMetadata("body")) {
             return;
         }
-        for (Body body : bodies) {
-            if (!body.getLocation().equals(clicked)) {
-                continue;
-            }
+        Body body = (Body) event.getClickedBlock().getMetadata("body").get(0).value();
+        foundBody(body, event.getPlayer(), opener);
+    }
+    public static void foundBody(Body body, Player player, Challenger opener){
 
-            if (opener.getMetadata().containsKey(Role.DETECTIVE) && !opener.isSpectating()) { // handle DNA scanning
-                if (event.getPlayer().getItemInHand() != null
-                        && event.getPlayer().getItemInHand().getType() == Material.COMPASS
-                        && event.getPlayer().getItemInHand().getItemMeta() != null
-                        && event.getPlayer().getItemInHand().getItemMeta().getDisplayName() != null
-                        && event.getPlayer().getItemInHand().getItemMeta().getDisplayName().endsWith(
-                        TTTCore.locale.getLocalizable("item.dna-scanner.name").localize())) {
-                    event.setCancelled(true);
-                    doDnaCheck(body, opener, event.getPlayer());
-                    return;
-                }
-            }
-
-            event.setCancelled(true);
-            searchBody(body, event.getPlayer(), ((Chest) event.getClickedBlock().getState()).getInventory().getSize());
-
-            if (opener.isSpectating() || event.getPlayer().isSneaking()) {
-                TTTCore.locale.getLocalizable("info.personal.status.discreet-search").withPrefix(Color.INFO)
-                        .sendTo(event.getPlayer());
+        if (opener.getMetadata().containsKey(Role.DETECTIVE) && !opener.isSpectating()) { // handle DNA scanning
+            if (player.getItemInHand() != null
+                    && player.getItemInHand().getType() == Material.COMPASS
+                    && player.getItemInHand().getItemMeta() != null
+                    && player.getItemInHand().getItemMeta().getDisplayName() != null
+                    && player.getItemInHand().getItemMeta().getDisplayName().endsWith(
+                    TTTCore.locale.getLocalizable("item.dna-scanner.name").localize())) {
+                doDnaCheck(body, opener, player);
                 return;
-            } else if (!body.isFound()) {
-                Optional<Challenger> bodyPlayer = TTTCore.mg.getChallenger(body.getPlayer());
-                String color;
-                switch (body.getRole()) {
-                    case Role.INNOCENT: {
-                        color = Color.INNOCENT;
-                        break;
-                    }
-                    case Role.TRAITOR: {
-                        color = Color.TRAITOR;
-                        break;
-                    }
-                    case Role.DETECTIVE: {
-                        color = Color.DETECTIVE;
-                        break;
-                    }
-                    default: {
-                        event.getPlayer().sendMessage("Something's gone terribly wrong inside the TTT "
-                                + "plugin. Please notify an admin."); // eh, may as well tell the player
-                        throw new AssertionError("Failed to determine role of found body. Report this immediately.");
-                    }
-                }
+            }
+        }
+        searchBody(body, player, 27);
 
-                body.setFound();
-                if (bodyPlayer.isPresent() && bodyPlayer.get().getRound() == body.getRound()) {
-                    bodyPlayer.get().getMetadata().set(MetadataKey.Player.BODY_FOUND, true);
-
-                    ScoreboardManager sm = body.getRound().getMetadata()
-                            .<ScoreboardManager>get(MetadataKey.Round.SCOREBOARD_MANAGER).get();
-                    sm.updateAllEntries();
+        if (opener.isSpectating() || player.isSneaking()) {
+            TTTCore.locale.getLocalizable("info.personal.status.discreet-search").withPrefix(Color.INFO)
+                    .sendTo(player);
+            return;
+        } else if (!body.isFound()) {
+            Optional<Challenger> bodyPlayer = TTTCore.mg.getChallenger(body.getPlayer());
+            String color;
+            switch (body.getRole()) {
+                case Role.INNOCENT: {
+                    color = Color.INNOCENT;
+                    break;
                 }
-
-                Localizable loc = TTTCore.locale.getLocalizable("info.global.round.event.body-find").withPrefix(color);
-                Localizable roleMsg
-                        = TTTCore.locale.getLocalizable("info.global.round.event.body-find." + body.getRole());
-                for (Challenger c : body.getRound().getChallengers()) {
-                    Player pl = Bukkit.getPlayer(c.getUniqueId());
-                    loc.withReplacements(event.getPlayer().getName(), body.getName())
-                            .withSuffix(" " + roleMsg.localizeFor(pl)).sendTo(pl);
+                case Role.TRAITOR: {
+                    color = Color.TRAITOR;
+                    break;
                 }
+                case Role.DETECTIVE: {
+                    color = Color.DETECTIVE;
+                    break;
+                }
+                default: {
+                    throw new AssertionError("Failed to determine role of found body. Report this immediately.");
+                }
+            }
+
+            body.setFound();
+            if (bodyPlayer.isPresent() && bodyPlayer.get().getRound() == body.getRound()) {
+                bodyPlayer.get().getMetadata().set(MetadataKey.Player.BODY_FOUND, true);
+
+                ScoreboardManager sm = body.getRound().getMetadata()
+                        .<ScoreboardManager>get(MetadataKey.Round.SCOREBOARD_MANAGER).get();
+                sm.updateAllEntries();
+            }
+
+            Localizable loc = TTTCore.locale.getLocalizable("info.global.round.event.body-find").withPrefix(color);
+            Localizable roleMsg
+                    = TTTCore.locale.getLocalizable("info.global.round.event.body-find." + body.getRole());
+            for (Challenger c : body.getRound().getChallengers()) {
+                Player pl = Bukkit.getPlayer(c.getUniqueId());
+                loc.withReplacements(opener.getName(), body.getName())
+                        .withSuffix(" " + roleMsg.localizeFor(pl)).sendTo(pl);
             }
         }
     }
@@ -222,7 +216,7 @@ public final class InteractHelper {
     }
 
     private static void searchBody(Body body, Player player, int size) {
-        Inventory inv = Bukkit.createInventory(player, size);
+        Inventory inv = Bukkit.createInventory(player, size, "Body Casket");
 
         // give token
         if (!body.getTokens().contains(player.getUniqueId())) {
