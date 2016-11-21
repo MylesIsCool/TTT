@@ -97,7 +97,7 @@ public class Drag {
             if (getRound().getLifecycleStage() == Stage.PLAYING) {
                 // if game running?
                 Location loc = location.clone();
-                loc = resolve(loc).getBlock().getLocation();
+                loc = resolve(loc);
                 round.getArena().markForRollback(LocationHelper.convert(loc));
                 Bukkit.getScheduler().scheduleSyncDelayedTask(TTTCore.getPlugin(), new Runnable() {
                     @Override
@@ -122,7 +122,7 @@ public class Drag {
             Block b = loc.getBlock();
             for (int i = 0; i < 5; i++) {
                 b = b.getRelative(BlockFace.DOWN);
-                if (b.getType() == Material.AIR) {
+                if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round)) {
                     return b.getLocation();
                 }
             }
@@ -133,8 +133,13 @@ public class Drag {
                 Block b = loc.getBlock();
                 for (int i = 0; i < 5; i++) {
                     b = b.getRelative(face);
-                    if (b.getType() == Material.AIR && DeathHelper.isInBounds(loc, round)) {
-                        return b.getLocation();
+                    for (BlockFace face2 : faces) {
+                        for (int i2 = 0; i2 < 5; i2++) {
+                            b = b.getRelative(face2);
+                            if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round)) {
+                                return b.getLocation();
+                            }
+                        }
                     }
                 }
             }
