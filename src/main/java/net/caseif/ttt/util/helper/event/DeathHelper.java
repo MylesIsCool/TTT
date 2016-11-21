@@ -26,6 +26,7 @@ package net.caseif.ttt.util.helper.event;
 
 import com.google.common.base.Optional;
 import net.caseif.flint.challenger.Challenger;
+import net.caseif.flint.round.Round;
 import net.caseif.flint.util.physical.Boundary;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.scoreboard.ScoreboardManager;
@@ -147,7 +148,10 @@ public final class DeathHelper {
         }
         return Optional.absent();
     }
-
+    public static boolean isInBounds(Location l, Round round){
+        Boundary bound = round.getArena().getBoundary();
+        return bound.contains(LocationHelper.convert(l));
+    }
     private void createBody(Location loc, Challenger ch, Challenger killer) {
         Boundary bound = ch.getRound().getArena().getBoundary();
         if (!bound.contains(LocationHelper.convert(loc))) {

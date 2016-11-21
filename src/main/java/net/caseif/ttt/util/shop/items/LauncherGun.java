@@ -76,7 +76,7 @@ public class LauncherGun extends Item implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onDmg(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Snowball) {
             if (event.getDamager().hasMetadata("blast")) {

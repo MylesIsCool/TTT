@@ -60,7 +60,7 @@ public class OneHitKillKnifeItem extends Item implements Listener {
         player.getInventory().addItem(getIcon());
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player) {
             Player player = (Player) event.getDamager();

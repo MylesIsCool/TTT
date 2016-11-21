@@ -91,7 +91,7 @@ public class Jihad extends Item implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof TNTPrimed) {
             if (event.getDamager().hasMetadata("ttt")) {
@@ -154,7 +154,7 @@ public class Jihad extends Item implements Listener {
                                 TNTPrimed tnt = player.getWorld().spawn(
                                         player.getLocation(), TNTPrimed.class);
                                 tnt.setFuseTicks(5);
-                                tnt.setYield(3.5f);
+                                tnt.setYield(4.5f);
                                 tnt.setIsIncendiary(false);
                                 tnt.setMetadata("ttt", new FixedMetadataValue(TTTCore.getPlugin(), player.getUniqueId()));
                             }

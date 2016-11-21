@@ -88,11 +88,11 @@ public class PowerGun extends Item implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onHit(EntityDamageByEntityEvent e) {
         if (e.getDamager() instanceof Arrow) {
             if (e.getDamager().hasMetadata("better")) {
-                e.setDamage(e.getDamage() * 2D);
+                e.setDamage(e.getDamage() * 1.5D);
             }
         }
     }

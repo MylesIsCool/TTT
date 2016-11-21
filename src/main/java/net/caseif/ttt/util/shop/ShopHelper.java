@@ -36,10 +36,7 @@ import net.caseif.ttt.util.shop.items.Item;
 import net.caseif.ttt.util.shop.items.LauncherGun;
 import net.caseif.ttt.util.shop.items.detective.BodyArmourItem;
 import net.caseif.ttt.util.shop.items.detective.PowerGun;
-import net.caseif.ttt.util.shop.items.traitor.ChestTrap;
-import net.caseif.ttt.util.shop.items.traitor.DisguisedGun;
-import net.caseif.ttt.util.shop.items.traitor.Jihad;
-import net.caseif.ttt.util.shop.items.traitor.OneHitKillKnifeItem;
+import net.caseif.ttt.util.shop.items.traitor.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -60,7 +57,7 @@ import java.util.List;
  */
 public final class ShopHelper {
     public static Item[] DETECTIVE_ITEMS = {new BodyArmourItem(), new PowerGun()};
-    public static Item[] TRAITOR_ITEMS = {new OneHitKillKnifeItem(), new DisguisedGun(), new Jihad(), new ChestTrap()};
+    public static Item[] TRAITOR_ITEMS = {new OneHitKillKnifeItem(), new DisguisedGun(), new Jihad(), new ChestTrap(), new Deadringer()};
     public static Item[] BOTH_ITEMS = {new LauncherGun(), new DeflectorItem()};
     public static final String TOKEN_KEY = "tokens";
     public static final String ITEMS_KEY = "bought_items";

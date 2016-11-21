@@ -27,6 +27,7 @@ package net.caseif.ttt.listeners.world;
 import net.caseif.flint.round.Round;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.util.constant.Stage;
+import net.caseif.ttt.util.helper.event.DeathHelper;
 import net.caseif.ttt.util.helper.platform.LocationHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -91,16 +92,21 @@ public class Drag {
         entity.removeMetadata("drag", TTTCore.getPlugin());
         Player p = Bukkit.getPlayer(player);
         // drop block
-        Location location = entity.getLocation();
+        final Location location = entity.getLocation();
         if (location.getBlock().getType() == Material.AIR) {
             if (getRound().getLifecycleStage() == Stage.PLAYING) {
                 // if game running?
                 Location loc = location.clone();
                 loc = resolve(loc).getBlock().getLocation();
                 round.getArena().markForRollback(LocationHelper.convert(loc));
-                location.getBlock().setType(Material.PISTON_BASE);
-                location.getBlock().setData((byte) 1);
-                location.getBlock().setMetadata("body", new FixedMetadataValue(TTTCore.getPlugin(), entity.getMetadata("body").get(0).value()));
+                Bukkit.getScheduler().scheduleSyncDelayedTask(TTTCore.getPlugin(), new Runnable() {
+                    @Override
+                    public void run() {
+                        location.getBlock().setType(Material.PISTON_BASE);
+                        location.getBlock().setData((byte) 1);
+                        location.getBlock().setMetadata("body", new FixedMetadataValue(TTTCore.getPlugin(), entity.getMetadata("body").get(0).value()));
+                    }
+                }, 2L);
             }
             // set metadata
             entity.remove();
@@ -111,7 +117,8 @@ public class Drag {
     }
 
     private Location resolve(Location loc) {
-        if (loc.getBlock().getType() == Material.AIR) {
+        loc = loc.getBlock().getLocation();
+        if (loc.getBlock().getType() == Material.AIR && DeathHelper.isInBounds(loc, round)) {
             Block b = loc.getBlock();
             for (int i = 0; i < 5; i++) {
                 b = b.getRelative(BlockFace.DOWN);
@@ -121,18 +128,18 @@ public class Drag {
             }
             return loc;
         } else {
-            BlockFace[] faces = new BlockFace[]{BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH};
+            BlockFace[] faces = new BlockFace[]{BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH};
             for (BlockFace face : faces) {
                 Block b = loc.getBlock();
                 for (int i = 0; i < 5; i++) {
                     b = b.getRelative(face);
-                    if (b.getType() == Material.AIR) {
+                    if (b.getType() == Material.AIR && DeathHelper.isInBounds(loc, round)) {
                         return b.getLocation();
                     }
                 }
             }
             // Failed :(
-            return loc;
+            return new Location(loc.getWorld(), round.getArena().getBoundary().getLowerBound().getX(), round.getArena().getBoundary().getLowerBound().getY(), round.getArena().getBoundary().getLowerBound().getZ());
         }
     }
 }
