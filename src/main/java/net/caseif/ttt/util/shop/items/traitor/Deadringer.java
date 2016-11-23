@@ -85,11 +85,15 @@ public class Deadringer extends Item implements Listener {
                     for (ItemStack i : player.getInventory()) {
                         if (i != null) {
                             if (i.hasItemMeta()) {
-                                if (i.getItemMeta().getDisplayName().equals(NAME)) {
-                                    stack = i;
-                                }
-                                if (i.getItemMeta().getDisplayName().equals(ChestTrap.NAME)) {
-                                    trap = i;
+                                if(i.getItemMeta() != null) {
+                                    if(i.getItemMeta().getDisplayName() != null) {
+                                        if (i.getItemMeta().getDisplayName().equals(NAME)) {
+                                            stack = i;
+                                        }
+                                        if (i.getItemMeta().getDisplayName().equals(ChestTrap.NAME)) {
+                                            trap = i;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -104,15 +108,15 @@ public class Deadringer extends Item implements Listener {
                         // Teleport
                         Challenger ch = TTTCore.getInstance().mg.getChallenger(player.getUniqueId()).get();
                         Collection<Location3D> locations = ch.getRound().getArena().getSpawnPoints().values();
-                        player.teleport(LocationHelper.convert(locations.toArray(new Location3D[0])[new SecureRandom().nextInt(locations.size())]));
-                        // Reset health
-                        player.setHealth(4D);
-                        event.setCancelled(true);
                         // Activate trap
                         if (trap != null) {
                             ChestTrap.placeFakeChest(player, DeathHelper.relocate(ch.getRound(), player.getLocation(), false).getBlock());
                             player.getInventory().remove(trap);
                         }
+                        player.teleport(LocationHelper.convert(locations.toArray(new Location3D[0])[new SecureRandom().nextInt(locations.size())]));
+                        // Reset health
+                        player.setHealth(4D);
+                        event.setCancelled(true);
                         player.getInventory().remove(stack);
                         return;
                     }

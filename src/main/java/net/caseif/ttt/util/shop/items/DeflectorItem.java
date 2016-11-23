@@ -72,19 +72,21 @@ public class DeflectorItem extends Item implements Listener {
                 if (isValid((Player) e.getEntity())) {
                     ItemStack chest = ((Player) e.getEntity()).getInventory().getChestplate();
                     if (chest != null) {
-                        if (chest.hasItemMeta()) {
-                            if (chest.getItemMeta().getDisplayName().equals(NAME)) {
-                                if (new SecureRandom().nextInt(3) != 1) {
-                                    e.setCancelled(true);
-                                    e.setDamage(0D);
-                                    Projectile p = (Projectile) e.getDamager();
-                                    Vector v = p.getVelocity().multiply(-1f);
-                                    SecureRandom random = new SecureRandom();
-                                    v = v.add(new Vector((-random.nextDouble() + 0.5D) / 10D, (-random.nextDouble() + 0.5D) / 10D, (-random.nextDouble() + 0.5D) / 10D));
-                                    p.remove();
-                                    // Shoot back
-                                    Projectile p2 = ((Player) e.getEntity()).launchProjectile(p.getClass(), v);
-                                    p2.setShooter(p.getShooter());
+                        if (chest.getItemMeta() != null) {
+                            if(chest.getItemMeta().getDisplayName() != null) {
+                                if (chest.getItemMeta().getDisplayName().equals(NAME)) {
+                                    if (new SecureRandom().nextInt(3) != 1) {
+                                        e.setCancelled(true);
+                                        e.setDamage(0D);
+                                        Projectile p = (Projectile) e.getDamager();
+                                        Vector v = p.getVelocity().multiply(-1f);
+                                        SecureRandom random = new SecureRandom();
+                                        v = v.add(new Vector((-random.nextDouble() + 0.5D) / 10D, (-random.nextDouble() + 0.5D) / 10D, (-random.nextDouble() + 0.5D) / 10D));
+                                        p.remove();
+                                        // Shoot back
+                                        Projectile p2 = ((Player) e.getEntity()).launchProjectile(p.getClass(), v);
+                                        p2.setShooter(p.getShooter());
+                                    }
                                 }
                             }
                         }

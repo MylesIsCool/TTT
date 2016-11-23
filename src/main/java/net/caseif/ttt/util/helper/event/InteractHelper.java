@@ -225,8 +225,10 @@ public final class InteractHelper {
                 if (ShopHelper.isAlive(challengerOptional.get())) {
                     boolean traitor = false;
                     Optional<Challenger> killer = TTTCore.getInstance().mg.getChallenger(body.getPlayer());
-                    if (RoleHelper.isTraitor(killer.get())) {
-                        traitor = true;
+                    if(killer.isPresent()) {
+                        if (RoleHelper.isTraitor(killer.get())) {
+                            traitor = true;
+                        }
                     }
                     if (RoleHelper.isTraitor(challengerOptional.get()) && !traitor) {
                         // Pick up token

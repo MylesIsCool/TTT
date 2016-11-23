@@ -43,6 +43,7 @@ public class Drag {
     private Entity entity;
     private Long lastTime;
     private Round round;
+    private boolean dropped = false;
 
     public Drag(Round round, UUID player, Entity entity) {
         this.player = player;
@@ -86,36 +87,38 @@ public class Drag {
     }
 
     public void drop() {
-        // Remove data
-        entity.removeMetadata("drag", TTTCore.getPlugin());
-        Player p = Bukkit.getPlayer(player);
-        // drop block
-        final Location location = entity.getLocation();
-        if (location.getBlock().getType() == Material.AIR) {
+        if (!dropped) {
+            dropped = true;
+            // Remove data
+            entity.removeMetadata("drag", TTTCore.getPlugin());
+            Player p = Bukkit.getPlayer(player);
+            // drop block
+            final Location location = entity.getLocation();
             if (getRound().getLifecycleStage() == Stage.PLAYING) {
                 // if game running?
-                Location loc = location.clone();
-                loc = DeathHelper.relocate(round, loc, true);
-                try {
-                    round.getArena().markForRollback(LocationHelper.convert(loc));
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(TTTCore.getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            if (getRound().getLifecycleStage() == Stage.PLAYING) {
-                                location.getBlock().setType(Material.PISTON_BASE);
-                                location.getBlock().setData((byte) 1);
-                                location.getBlock().setMetadata("body", new FixedMetadataValue(TTTCore.getPlugin(), entity.getMetadata("body").get(0).value()));
+                final Location loc = DeathHelper.relocate(round, location.clone(), true);
+                if(loc.getBlock().getType() == Material.AIR) {
+                    try {
+                        round.getArena().markForRollback(LocationHelper.convert(loc));
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(TTTCore.getPlugin(), new Runnable() {
+                            @Override
+                            public void run() {
+                                if (getRound().getLifecycleStage() == Stage.PLAYING) {
+                                    loc.getBlock().setType(Material.PISTON_BASE);
+                                    loc.getBlock().setData((byte) 1);
+                                    loc.getBlock().setMetadata("body", new FixedMetadataValue(TTTCore.getPlugin(), entity.getMetadata("body").get(0).value()));
+                                }
                             }
-                        }
-                    }, 2L);
-                } catch (Exception e) {
+                        }, 2L);
+                    } catch (Exception e) {
+                    }
                 }
             }
             // set metadata
             entity.remove();
-        }
-        if (p != null) {
-            p.removeMetadata("drag", TTTCore.getPlugin());
+            if (p != null) {
+                p.removeMetadata("drag", TTTCore.getPlugin());
+            }
         }
     }
 }
