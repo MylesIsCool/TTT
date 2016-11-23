@@ -32,8 +32,6 @@ import net.caseif.ttt.util.helper.platform.LocationHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -97,54 +95,27 @@ public class Drag {
             if (getRound().getLifecycleStage() == Stage.PLAYING) {
                 // if game running?
                 Location loc = location.clone();
-                loc = resolve(loc);
-                round.getArena().markForRollback(LocationHelper.convert(loc));
-                Bukkit.getScheduler().scheduleSyncDelayedTask(TTTCore.getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        location.getBlock().setType(Material.PISTON_BASE);
-                        location.getBlock().setData((byte) 1);
-                        location.getBlock().setMetadata("body", new FixedMetadataValue(TTTCore.getPlugin(), entity.getMetadata("body").get(0).value()));
-                    }
-                }, 2L);
+                loc = DeathHelper.relocate(round, loc);
+                try {
+                    round.getArena().markForRollback(LocationHelper.convert(loc));
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(TTTCore.getPlugin(), new Runnable() {
+                        @Override
+                        public void run() {
+                            if (getRound().getLifecycleStage() == Stage.PLAYING) {
+                                location.getBlock().setType(Material.PISTON_BASE);
+                                location.getBlock().setData((byte) 1);
+                                location.getBlock().setMetadata("body", new FixedMetadataValue(TTTCore.getPlugin(), entity.getMetadata("body").get(0).value()));
+                            }
+                        }
+                    }, 2L);
+                } catch (Exception e) {
+                }
             }
             // set metadata
             entity.remove();
         }
         if (p != null) {
             p.removeMetadata("drag", TTTCore.getPlugin());
-        }
-    }
-
-    private Location resolve(Location loc) {
-        loc = loc.getBlock().getLocation();
-        if (loc.getBlock().getType() == Material.AIR && DeathHelper.isInBounds(loc, round)) {
-            Block b = loc.getBlock();
-            for (int i = 0; i < 5; i++) {
-                b = b.getRelative(BlockFace.DOWN);
-                if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round)) {
-                    return b.getLocation();
-                }
-            }
-            return loc;
-        } else {
-            BlockFace[] faces = new BlockFace[]{BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH};
-            for (BlockFace face : faces) {
-                Block b = loc.getBlock();
-                for (int i = 0; i < 5; i++) {
-                    b = b.getRelative(face);
-                    for (BlockFace face2 : faces) {
-                        for (int i2 = 0; i2 < 5; i2++) {
-                            b = b.getRelative(face2);
-                            if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round)) {
-                                return b.getLocation();
-                            }
-                        }
-                    }
-                }
-            }
-            // Failed :(
-            return new Location(loc.getWorld(), round.getArena().getBoundary().getLowerBound().getX(), round.getArena().getBoundary().getLowerBound().getY(), round.getArena().getBoundary().getLowerBound().getZ());
         }
     }
 }

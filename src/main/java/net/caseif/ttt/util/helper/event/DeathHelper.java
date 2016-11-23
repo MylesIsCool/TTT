@@ -38,10 +38,12 @@ import net.caseif.ttt.util.helper.gamemode.KarmaHelper;
 import net.caseif.ttt.util.helper.platform.LocationHelper;
 import net.caseif.ttt.util.helper.platform.NmsHelper;
 import net.caseif.ttt.util.helper.platform.PlayerHelper;
+import net.caseif.ttt.util.shop.ShopHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -148,23 +150,56 @@ public final class DeathHelper {
         }
         return Optional.absent();
     }
-    public static boolean isInBounds(Location l, Round round){
+
+    public static boolean isInBounds(Location l, Round round) {
+        // if dead body in way, not in bounds :D?
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (ShopHelper.isAlive(player)) {
+                if (player.getLocation().getBlockX() == l.getBlockX() && player.getLocation().getBlockY() == l.getBlockY() && player.getLocation().getBlockZ() == l.getBlockZ()) {
+                    return false;
+                }
+            }
+        }
         Boundary bound = round.getArena().getBoundary();
         return bound.contains(LocationHelper.convert(l));
     }
+
+    public static Location relocate(Round round, Location loc) {
+        loc = loc.getBlock().getLocation();
+        if (loc.getBlock().getType() == Material.AIR && DeathHelper.isInBounds(loc, round)) {
+            Block b = loc.getBlock();
+            for (int i = 0; i < 5; i++) {
+                b = b.getRelative(BlockFace.DOWN);
+                if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round)) {
+                    return b.getLocation();
+                }
+            }
+            return loc;
+        } else {
+            BlockFace[] faces = new BlockFace[]{BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH};
+            for (BlockFace face : faces) {
+                Block b = loc.getBlock();
+                for (int i = 0; i < 5; i++) {
+                    b = b.getRelative(face);
+                    for (BlockFace face2 : faces) {
+                        for (int i2 = 0; i2 < 5; i2++) {
+                            b = b.getRelative(face2);
+                            if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round)) {
+                                return b.getLocation();
+                            }
+                        }
+                    }
+                }
+            }
+            // Failed :(
+            return new Location(loc.getWorld(), round.getArena().getBoundary().getLowerBound().getX(), round.getArena().getBoundary().getLowerBound().getY(), round.getArena().getBoundary().getLowerBound().getZ());
+        }
+    }
+
     private void createBody(Location loc, Challenger ch, Challenger killer) {
         Boundary bound = ch.getRound().getArena().getBoundary();
         if (!bound.contains(LocationHelper.convert(loc))) {
-            double x = loc.getX() > bound.getUpperBound().getX() ? bound.getUpperBound().getX()
-                    : loc.getX() < bound.getLowerBound().getX() ? bound.getLowerBound().getX()
-                    : loc.getX();
-            double y = loc.getY() > bound.getUpperBound().getY() ? bound.getUpperBound().getY()
-                    : loc.getY() < bound.getLowerBound().getY() ? bound.getLowerBound().getY()
-                    : loc.getY();
-            double z = loc.getZ() > bound.getUpperBound().getZ() ? bound.getUpperBound().getZ()
-                    : loc.getZ() < bound.getLowerBound().getZ() ? bound.getLowerBound().getZ()
-                    : loc.getZ();
-            loc = new Location(loc.getWorld(), x, y, z);
+            loc = relocate(ch.getRound(), loc);
         }
         loc.getBlock().setType(Material.PISTON_BASE);
         loc.getBlock().setData((byte) 1);
