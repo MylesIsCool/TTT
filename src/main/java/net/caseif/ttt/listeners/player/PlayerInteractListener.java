@@ -49,6 +49,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 /**
  * Listener for player events initiated by a manual interaction.
@@ -58,6 +59,8 @@ public class PlayerInteractListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if(event.getHand() == EquipmentSlot.OFF_HAND)
+            return;
         // check if player is in TTT round
         if (TTTCore.mg.getChallenger(event.getPlayer().getUniqueId()).isPresent()) {
             Challenger ch = TTTCore.mg.getChallenger(event.getPlayer().getUniqueId()).get();

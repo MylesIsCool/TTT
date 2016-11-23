@@ -151,12 +151,14 @@ public final class DeathHelper {
         return Optional.absent();
     }
 
-    public static boolean isInBounds(Location l, Round round) {
+    public static boolean isInBounds(Location l, Round round, boolean playerFlag) {
         // if dead body in way, not in bounds :D?
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (ShopHelper.isAlive(player)) {
-                if (player.getLocation().getBlockX() == l.getBlockX() && player.getLocation().getBlockY() == l.getBlockY() && player.getLocation().getBlockZ() == l.getBlockZ()) {
-                    return false;
+        if(playerFlag) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (ShopHelper.isAlive(player)) {
+                    if (player.getLocation().getBlockX() == l.getBlockX() && player.getLocation().getBlockY() == l.getBlockY() && player.getLocation().getBlockZ() == l.getBlockZ()) {
+                        return false;
+                    }
                 }
             }
         }
@@ -164,13 +166,13 @@ public final class DeathHelper {
         return bound.contains(LocationHelper.convert(l));
     }
 
-    public static Location relocate(Round round, Location loc) {
+    public static Location relocate(Round round, Location loc, boolean checkPlayers) {
         loc = loc.getBlock().getLocation();
-        if (loc.getBlock().getType() == Material.AIR && DeathHelper.isInBounds(loc, round)) {
+        if (loc.getBlock().getType() == Material.AIR && DeathHelper.isInBounds(loc, round, checkPlayers)) {
             Block b = loc.getBlock();
             for (int i = 0; i < 5; i++) {
                 b = b.getRelative(BlockFace.DOWN);
-                if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round)) {
+                if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round, checkPlayers)) {
                     return b.getLocation();
                 }
             }
@@ -184,7 +186,7 @@ public final class DeathHelper {
                     for (BlockFace face2 : faces) {
                         for (int i2 = 0; i2 < 5; i2++) {
                             b = b.getRelative(face2);
-                            if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round)) {
+                            if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round, checkPlayers)) {
                                 return b.getLocation();
                             }
                         }
@@ -199,7 +201,7 @@ public final class DeathHelper {
     private void createBody(Location loc, Challenger ch, Challenger killer) {
         Boundary bound = ch.getRound().getArena().getBoundary();
         if (!bound.contains(LocationHelper.convert(loc))) {
-            loc = relocate(ch.getRound(), loc);
+            loc = relocate(ch.getRound(), loc, true);
         }
         loc.getBlock().setType(Material.PISTON_BASE);
         loc.getBlock().setData((byte) 1);

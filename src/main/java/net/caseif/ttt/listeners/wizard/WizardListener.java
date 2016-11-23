@@ -45,6 +45,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.UUID;
 
@@ -138,6 +139,8 @@ public class WizardListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     @SuppressWarnings("fallthrough")
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if(event.getHand() == EquipmentSlot.OFF_HAND)
+            return;
         if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (WIZARDS.containsKey(event.getPlayer().getUniqueId())) {
                 int stage = WIZARDS.get(event.getPlayer().getUniqueId());

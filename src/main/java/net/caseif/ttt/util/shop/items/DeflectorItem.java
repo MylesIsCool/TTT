@@ -24,6 +24,7 @@
 
 package net.caseif.ttt.util.shop.items;
 
+import net.caseif.ttt.util.constant.Color;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -40,11 +41,14 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 public class DeflectorItem extends Item implements Listener {
+
+    public static final String NAME = Color.INFO + "Reflector Chestplate";
+
     @Override
     public ItemStack getIcon() {
         ItemStack stack = new ItemStack(Material.CHAINMAIL_CHESTPLATE);
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(ChatColor.WHITE + "Reflector Chestplate");
+        meta.setDisplayName(NAME);
         meta.setLore(Arrays.asList(ChatColor.WHITE + "Bounces arrows 50% of the time"));
 
         stack.setItemMeta(meta);
@@ -69,7 +73,7 @@ public class DeflectorItem extends Item implements Listener {
                     ItemStack chest = ((Player) e.getEntity()).getInventory().getChestplate();
                     if (chest != null) {
                         if (chest.hasItemMeta()) {
-                            if (chest.getItemMeta().getDisplayName().equals(ChatColor.WHITE + "Reflector Chestplate")) {
+                            if (chest.getItemMeta().getDisplayName().equals(NAME)) {
                                 if (new SecureRandom().nextInt(3) != 1) {
                                     e.setCancelled(true);
                                     e.setDamage(0D);

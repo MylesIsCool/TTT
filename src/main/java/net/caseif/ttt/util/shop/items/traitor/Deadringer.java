@@ -27,6 +27,8 @@ package net.caseif.ttt.util.shop.items.traitor;
 import net.caseif.flint.challenger.Challenger;
 import net.caseif.flint.util.physical.Location3D;
 import net.caseif.ttt.TTTCore;
+import net.caseif.ttt.util.constant.Color;
+import net.caseif.ttt.util.helper.event.DeathHelper;
 import net.caseif.ttt.util.helper.platform.LocationHelper;
 import net.caseif.ttt.util.shop.ShopHelper;
 import net.caseif.ttt.util.shop.items.Item;
@@ -47,11 +49,14 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class Deadringer extends Item implements Listener {
+
+    public static final String NAME = Color.INFO + "Deadringer";
+
     @Override
     public ItemStack getIcon() {
         ItemStack stack = new ItemStack(Material.WATCH);
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(ChatColor.WHITE + "Deadringer");
+        meta.setDisplayName(NAME);
         meta.setLore(Arrays.asList(ChatColor.WHITE + "When you drop below 2 hearts", ChatColor.WHITE + "Teleport to a random spawn"));
 
         stack.setItemMeta(meta);
@@ -76,12 +81,15 @@ public class Deadringer extends Item implements Listener {
             if (result <= 2D) {
                 if (ShopHelper.isAlive(player)) {
                     ItemStack stack = null;
+                    ItemStack trap = null;
                     for (ItemStack i : player.getInventory()) {
                         if (i != null) {
                             if (i.hasItemMeta()) {
-                                if (i.getItemMeta().getDisplayName().equals(ChatColor.WHITE + "Deadringer")) {
+                                if (i.getItemMeta().getDisplayName().equals(NAME)) {
                                     stack = i;
-                                    break;
+                                }
+                                if (i.getItemMeta().getDisplayName().equals(ChestTrap.NAME)) {
+                                    trap = i;
                                 }
                             }
                         }
@@ -100,6 +108,11 @@ public class Deadringer extends Item implements Listener {
                         // Reset health
                         player.setHealth(4D);
                         event.setCancelled(true);
+                        // Activate trap
+                        if (trap != null) {
+                            ChestTrap.placeFakeChest(player, DeathHelper.relocate(ch.getRound(), player.getLocation(), false).getBlock());
+                            player.getInventory().remove(trap);
+                        }
                         player.getInventory().remove(stack);
                         return;
                     }

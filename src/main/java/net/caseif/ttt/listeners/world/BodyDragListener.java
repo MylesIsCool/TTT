@@ -45,6 +45,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
@@ -79,6 +80,8 @@ public class BodyDragListener implements Listener, Runnable {
 
     @EventHandler
     public void onEntityRight(PlayerInteractAtEntityEvent e) {
+        if(e.getHand() == EquipmentSlot.OFF_HAND)
+            return;
         if (e.getRightClicked() instanceof FallingBlock) {
             if (e.getRightClicked().hasMetadata("moveable")) {
                 drag(e.getPlayer(), e.getRightClicked());
@@ -125,6 +128,8 @@ public class BodyDragListener implements Listener, Runnable {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInteract(PlayerInteractEvent e) {
+        if(e.getHand() == EquipmentSlot.OFF_HAND)
+            return;
         Optional<Challenger> challengerOptional = TTTCore.getInstance().mg.getChallenger(e.getPlayer().getUniqueId());
         if (challengerOptional.isPresent()) {
             if (ShopHelper.isAlive(challengerOptional.get())) {

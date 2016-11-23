@@ -36,11 +36,14 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import java.util.Arrays;
 
 public class BodyArmourItem extends Item {
+
+    public static final String NAME = net.caseif.ttt.util.constant.Color.INFO + "Body Armour";
+
     @Override
     public ItemStack getIcon() {
         ItemStack stack = makeBlue(new ItemStack(Material.LEATHER_CHESTPLATE));
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(ChatColor.WHITE + "Body Armour");
+        meta.setDisplayName(NAME);
         meta.setLore(Arrays.asList(ChatColor.WHITE + "Reinforced Armour"));
 
         stack.setItemMeta(meta);

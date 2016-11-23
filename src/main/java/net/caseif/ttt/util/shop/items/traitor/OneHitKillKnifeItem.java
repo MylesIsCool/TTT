@@ -24,6 +24,7 @@
 
 package net.caseif.ttt.util.shop.items.traitor;
 
+import net.caseif.ttt.util.constant.Color;
 import net.caseif.ttt.util.shop.items.Item;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -39,11 +40,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 public class OneHitKillKnifeItem extends Item implements Listener {
+
+    public static final String NAME = Color.INFO + "One Hit Kill Knife";
+
     @Override
     public ItemStack getIcon() {
         ItemStack stack = new ItemStack(Material.GOLD_SWORD);
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(ChatColor.WHITE + "One Hit Kill Knife");
+        meta.setDisplayName(NAME);
         meta.setLore(Arrays.asList(ChatColor.WHITE + "One hit kills", ChatColor.WHITE + "If you're 1 block away"));
 
         stack.setItemMeta(meta);
@@ -65,7 +69,7 @@ public class OneHitKillKnifeItem extends Item implements Listener {
         if (event.getDamager() instanceof Player) {
             Player player = (Player) event.getDamager();
             if (isValid(player)) {
-                if (isHolding(player, ChatColor.WHITE + "One Hit Kill Knife")) {
+                if (isHolding(player, NAME)) {
                     if (event.getDamager().getLocation().distance(event.getEntity().getLocation()) < 1.7D) {
                         event.setDamage(50D);
                     } else {

@@ -25,6 +25,7 @@
 package net.caseif.ttt.util.shop.items;
 
 import net.caseif.ttt.TTTCore;
+import net.caseif.ttt.util.constant.Color;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -35,6 +36,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -43,11 +45,14 @@ import org.bukkit.util.Vector;
 import java.util.Arrays;
 
 public class LauncherGun extends Item implements Listener {
+
+    public static final String NAME = Color.INFO + "Launching Gun";
+
     @Override
     public ItemStack getIcon() {
         ItemStack stack = new ItemStack(Material.END_ROD);
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(ChatColor.WHITE + "Launching Gun");
+        meta.setDisplayName(NAME);
         meta.setLore(Arrays.asList(ChatColor.WHITE + "Blast people away!"));
 
         stack.setItemMeta(meta);
@@ -66,9 +71,11 @@ public class LauncherGun extends Item implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(PlayerInteractEvent event) {
+        if(event.getHand() == EquipmentSlot.OFF_HAND)
+            return;
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (isValid(event.getPlayer())) {
-                if (isHolding(event.getPlayer(), ChatColor.WHITE + "Launching Gun")) {
+                if (isHolding(event.getPlayer(), NAME)) {
                     Snowball snowball = event.getPlayer().launchProjectile(Snowball.class);
                     snowball.setMetadata("blast", new FixedMetadataValue(TTTCore.getPlugin(), true));
                 }

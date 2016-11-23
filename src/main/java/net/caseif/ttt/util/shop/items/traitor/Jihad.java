@@ -27,6 +27,8 @@ package net.caseif.ttt.util.shop.items.traitor;
 import com.google.common.base.Optional;
 import net.caseif.flint.challenger.Challenger;
 import net.caseif.ttt.TTTCore;
+import net.caseif.ttt.util.constant.*;
+import net.caseif.ttt.util.constant.Color;
 import net.caseif.ttt.util.shop.ShopHelper;
 import net.caseif.ttt.util.shop.items.Item;
 import org.bukkit.*;
@@ -39,6 +41,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
@@ -48,11 +51,14 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public class Jihad extends Item implements Listener {
+
+    public static final String NAME = Color.INFO + "Jihad Bomb";
+
     @Override
     public ItemStack getIcon() {
         ItemStack stack = new ItemStack(Material.REDSTONE_TORCH_ON);
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(ChatColor.WHITE + "Jihad Bomb");
+        meta.setDisplayName(NAME);
         meta.setLore(Arrays.asList(ChatColor.WHITE + "Right click to blow up", ChatColor.WHITE + "Everyone will have a blast!"));
 
         stack.setItemMeta(meta);
@@ -71,10 +77,12 @@ public class Jihad extends Item implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(PlayerInteractEvent event) {
+        if(event.getHand() == EquipmentSlot.OFF_HAND)
+            return;
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK ||
                 event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
             if (isValid(event.getPlayer())) {
-                if (isHolding(event.getPlayer(), ChatColor.WHITE + "Jihad Bomb")) {
+                if (isHolding(event.getPlayer(), NAME)) {
                     if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
                         event.getPlayer().setItemInHand(null);
                         activateJihad(event.getPlayer());

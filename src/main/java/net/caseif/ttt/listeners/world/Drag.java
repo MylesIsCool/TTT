@@ -95,7 +95,7 @@ public class Drag {
             if (getRound().getLifecycleStage() == Stage.PLAYING) {
                 // if game running?
                 Location loc = location.clone();
-                loc = DeathHelper.relocate(round, loc);
+                loc = DeathHelper.relocate(round, loc, true);
                 try {
                     round.getArena().markForRollback(LocationHelper.convert(loc));
                     Bukkit.getScheduler().scheduleSyncDelayedTask(TTTCore.getPlugin(), new Runnable() {

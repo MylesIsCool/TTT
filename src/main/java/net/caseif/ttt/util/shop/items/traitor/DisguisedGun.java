@@ -38,17 +38,21 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 
 public class DisguisedGun extends Item implements Listener {
+
+    public static final String NAME = Color.INFO + "Disguised Gun";
+
     @Override
     public ItemStack getIcon() {
         ItemStack stack = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(ChatColor.WHITE + "Disguised Gun");
+        meta.setDisplayName(NAME);
         meta.setLore(Arrays.asList(ChatColor.WHITE + "Looks like a crowbar", ChatColor.WHITE + "Shoots stuff"));
 
         stack.setItemMeta(meta);
@@ -67,9 +71,11 @@ public class DisguisedGun extends Item implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(PlayerInteractEvent event) {
+        if(event.getHand() == EquipmentSlot.OFF_HAND)
+            return;
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (isValid(event.getPlayer())) {
-                if (isHolding(event.getPlayer(), ChatColor.WHITE + "Disguised Gun")) {
+                if (isHolding(event.getPlayer(), NAME)) {
                     if (event.getPlayer().getInventory().contains(Material.ARROW)
                             || !TTTCore.config.get(ConfigKey.REQUIRE_AMMO_FOR_GUNS)) {
                         if (TTTCore.config.get(ConfigKey.REQUIRE_AMMO_FOR_GUNS)) {
