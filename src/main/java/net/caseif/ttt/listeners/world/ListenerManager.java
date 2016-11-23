@@ -31,6 +31,7 @@ import net.caseif.ttt.listeners.player.PlayerConnectionListener;
 import net.caseif.ttt.listeners.player.PlayerInteractListener;
 import net.caseif.ttt.listeners.player.PlayerUpdateListener;
 import net.caseif.ttt.listeners.player.SpecialPlayerListener;
+import net.caseif.ttt.listeners.tester.TesterListener;
 import net.caseif.ttt.listeners.wizard.WizardListener;
 
 import net.caseif.ttt.util.shop.ShopHelper;
@@ -58,6 +59,8 @@ public class ListenerManager {
 
         // register wizard listener
         registerListener(new WizardListener());
+        // tester
+        registerListener(new TesterListener());
         // body
         BodyDragListener bdl = new BodyDragListener();
         registerListener(bdl);
