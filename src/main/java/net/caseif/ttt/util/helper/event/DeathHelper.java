@@ -153,7 +153,7 @@ public final class DeathHelper {
 
     public static boolean isInBounds(Location l, Round round, boolean playerFlag) {
         // if dead body in way, not in bounds :D?
-        if(playerFlag) {
+        if (playerFlag) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (ShopHelper.isAlive(player)) {
                     if (player.getLocation().getBlockX() == l.getBlockX() && player.getLocation().getBlockY() == l.getBlockY() && player.getLocation().getBlockZ() == l.getBlockZ()) {
@@ -171,6 +171,9 @@ public final class DeathHelper {
         if (loc.getBlock().getType() == Material.AIR && DeathHelper.isInBounds(loc, round, checkPlayers)) {
             Block b = loc.getBlock();
             for (int i = 0; i < 5; i++) {
+                if (b.getRelative(BlockFace.DOWN).getType() != Material.AIR) {
+                    return b.getLocation();
+                }
                 b = b.getRelative(BlockFace.DOWN);
                 if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round, checkPlayers)) {
                     return b.getLocation();
@@ -178,7 +181,7 @@ public final class DeathHelper {
             }
             return loc;
         } else {
-            BlockFace[] faces = new BlockFace[]{BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH};
+            BlockFace[] faces = new BlockFace[]{BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH};
             for (BlockFace face : faces) {
                 Block b = loc.getBlock();
                 for (int i = 0; i < 5; i++) {

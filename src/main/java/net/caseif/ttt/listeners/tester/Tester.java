@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Tester implements Runnable {
-    private static final BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+    public static final BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     private static final BlockFace[] ns = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH};
     private static final BlockFace[] ew = new BlockFace[]{BlockFace.EAST, BlockFace.WEST};
     private final Block pressurePlate;

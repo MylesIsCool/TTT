@@ -24,8 +24,9 @@
 
 package net.caseif.ttt.util.helper.gamemode;
 
-import static net.caseif.ttt.lobby.StatusLobbySignPopulator.SIGN_HASTE_SWITCH_PERIOD;
-
+import net.caseif.flint.challenger.Challenger;
+import net.caseif.flint.round.Round;
+import net.caseif.rosetta.Localizable;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.scoreboard.ScoreboardManager;
 import net.caseif.ttt.util.config.ConfigKey;
@@ -34,10 +35,6 @@ import net.caseif.ttt.util.constant.MetadataKey;
 import net.caseif.ttt.util.constant.Role;
 import net.caseif.ttt.util.constant.Stage;
 import net.caseif.ttt.util.helper.platform.TitleHelper;
-
-import net.caseif.flint.challenger.Challenger;
-import net.caseif.flint.round.Round;
-import net.caseif.rosetta.Localizable;
 import net.caseif.ttt.util.shop.ShopHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -47,6 +44,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.NumberFormat;
+
+import static net.caseif.ttt.lobby.StatusLobbySignPopulator.SIGN_HASTE_SWITCH_PERIOD;
 
 /**
  * Static-utility class for round-related methods.
@@ -112,6 +111,7 @@ public final class RoundHelper {
                     TitleHelper.sendStatusTitle(pl, Role.INNOCENT);
                 }
             } else if (ch.getTeam().get().getId().equals(Role.TRAITOR)) {
+                int amount = 2;
                 if (ch.getTeam().get().getChallengers().size() > 1) {
                     TTTCore.locale.getLocalizable("info.personal.status.role.traitor")
                             .withPrefix(Color.TRAITOR).sendTo(pl);
@@ -125,9 +125,10 @@ public final class RoundHelper {
                 } else {
                     TTTCore.locale.getLocalizable("info.personal.status.role.traitor.alone")
                             .withPrefix(Color.TRAITOR).sendTo(pl);
+                    amount = 4;
                 }
-                ch.getMetadata().set(ShopHelper.TOKEN_KEY, 2);
-                pl.sendMessage(ChatColor.GRAY + "You have started the game with 2 tokens, spend it on the shop /ttt shop. You can earn tokens by opening body chests.");
+                ch.getMetadata().set(ShopHelper.TOKEN_KEY, amount);
+                pl.sendMessage(ChatColor.GRAY + "You have started the game with " + amount + " tokens, spend it on the shop /ttt shop. You can earn tokens by opening body chests.");
                 TitleHelper.sendStatusTitle(pl, Role.TRAITOR);
             }
 
@@ -192,7 +193,7 @@ public final class RoundHelper {
     /**
      * Broadcasts a {@link Localizable} to a {@link Round}.
      *
-     * @param round The {@link Round} to broadcast to
+     * @param round       The {@link Round} to broadcast to
      * @param localizable The {@link Localizable} to broadcast
      */
     public static void broadcast(Round round, Localizable localizable) {

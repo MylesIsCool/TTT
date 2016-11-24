@@ -55,6 +55,14 @@ public class TesterListener implements Listener {
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(TTTCore.getPlugin(), new Runnable() {
                                     public void run() {
                                         e.getClickedBlock().removeMetadata("checker", TTTCore.getPlugin());
+                                        for (BlockFace face : Tester.faces) {
+                                            if (e.getClickedBlock().getRelative(face).hasMetadata("body")) {
+                                                return;
+                                            }
+                                            if (e.getClickedBlock().getRelative(BlockFace.UP).getRelative(face).hasMetadata("body")) {
+                                                return;
+                                            }
+                                        }
                                         // Calculate players to be tested
                                         List<UUID> players = new ArrayList<UUID>();
                                         for (Player p : Bukkit.getOnlinePlayers()) {
