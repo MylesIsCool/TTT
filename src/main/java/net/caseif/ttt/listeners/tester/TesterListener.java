@@ -24,7 +24,9 @@
 
 package net.caseif.ttt.listeners.tester;
 
+import net.caseif.flint.challenger.Challenger;
 import net.caseif.ttt.TTTCore;
+import net.caseif.ttt.util.constant.Stage;
 import net.caseif.ttt.util.shop.ShopHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -34,6 +36,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.ArrayList;
@@ -43,12 +46,21 @@ import java.util.UUID;
 public class TesterListener implements Listener {
     @EventHandler
     public void onInteract(final PlayerInteractEvent e) {
+        if (e.getHand() == EquipmentSlot.OFF_HAND) return;
         if (!ShopHelper.isAlive(e.getPlayer())) return;
+        final Challenger ch = TTTCore.getInstance().mg.getChallenger(e.getPlayer().getUniqueId()).get();
+        if (ch.getRound().getLifecycleStage() != Stage.PLAYING) return;
         if (e.getAction() == Action.PHYSICAL) {
             if (e.getClickedBlock() != null) {
                 if (e.getClickedBlock().getType() == Material.IRON_PLATE) {
                     if (e.getClickedBlock().getRelative(BlockFace.DOWN).getType() == Material.IRON_BLOCK) {
                         // Traitor tester
+                        if (e.getClickedBlock().hasMetadata("tester")) {
+                            Tester tester = (Tester) e.getClickedBlock().getMetadata("tester").get(0).value();
+                            if (tester.isDone() || (ch.getRound() != tester.getRound())) {
+                                e.getClickedBlock().removeMetadata("tester", TTTCore.getPlugin());
+                            }
+                        }
                         if (!e.getClickedBlock().hasMetadata("tester")) {
                             if (!e.getClickedBlock().hasMetadata("checker")) {
                                 e.getClickedBlock().setMetadata("checker", new FixedMetadataValue(TTTCore.getPlugin(), true));
@@ -78,7 +90,7 @@ public class TesterListener implements Listener {
                                             for (UUID uuid : players) {
                                                 Bukkit.getPlayer(uuid).teleport(e.getClickedBlock().getLocation().add(0.5, 0, 0.5).setDirection(Bukkit.getPlayer(uuid).getLocation().getDirection()));
                                             }
-                                            Tester tester = new Tester(e.getClickedBlock(), players);
+                                            Tester tester = new Tester(e.getClickedBlock(), players, ch.getRound());
                                             tester.start();
                                         }
                                     }

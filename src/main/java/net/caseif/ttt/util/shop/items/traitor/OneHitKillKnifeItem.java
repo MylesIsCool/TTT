@@ -70,7 +70,7 @@ public class OneHitKillKnifeItem extends Item implements Listener {
             Player player = (Player) event.getDamager();
             if (isValid(player)) {
                 if (isHolding(player, NAME)) {
-                    if (event.getDamager().getLocation().distance(event.getEntity().getLocation()) < 1.7D) {
+                    if (event.getDamager().getLocation().distance(event.getEntity().getLocation()) <= 2.5D) {
                         event.setDamage(50D);
                     } else {
                         event.setDamage(5D);

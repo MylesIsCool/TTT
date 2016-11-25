@@ -26,6 +26,7 @@ package net.caseif.ttt.listeners.tester;
 
 import com.google.common.base.Optional;
 import net.caseif.flint.challenger.Challenger;
+import net.caseif.flint.round.Round;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.util.helper.gamemode.RoleHelper;
 import net.caseif.ttt.util.shop.ShopHelper;
@@ -48,13 +49,16 @@ public class Tester implements Runnable {
     private static final BlockFace[] ew = new BlockFace[]{BlockFace.EAST, BlockFace.WEST};
     private final Block pressurePlate;
     private final List<UUID> players;
-    private int task;
+    private int task = -1;
     private int stage = 0;
     private int colour = 0;
+    private boolean done = false;
+    private Round round;
 
-    public Tester(Block clickedBlock, List<UUID> players) {
+    public Tester(Block clickedBlock, List<UUID> players, Round round) {
         this.pressurePlate = clickedBlock;
         this.players = players;
+        this.round = round;
     }
 
     public void cleanPlayers() {
@@ -73,6 +77,10 @@ public class Tester implements Runnable {
                 }
             }
         }
+    }
+
+    public boolean isDone() {
+        return done;
     }
 
     public void start() {
@@ -214,6 +222,7 @@ public class Tester implements Runnable {
             }
             Bukkit.getScheduler().cancelTask(task);
             pressurePlate.removeMetadata("tester", TTTCore.getPlugin());
+            done = true;
             // Teleport players out
             for (UUID uuid : players) {
                 Player player = Bukkit.getPlayer(uuid);
@@ -223,5 +232,9 @@ public class Tester implements Runnable {
                 }
             }
         }
+    }
+
+    public Round getRound() {
+        return round;
     }
 }

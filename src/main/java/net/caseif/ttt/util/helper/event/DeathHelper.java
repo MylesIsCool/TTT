@@ -34,6 +34,7 @@ import net.caseif.ttt.util.Body;
 import net.caseif.ttt.util.config.ConfigKey;
 import net.caseif.ttt.util.constant.MetadataKey;
 import net.caseif.ttt.util.constant.Role;
+import net.caseif.ttt.util.constant.Stage;
 import net.caseif.ttt.util.helper.gamemode.KarmaHelper;
 import net.caseif.ttt.util.helper.platform.LocationHelper;
 import net.caseif.ttt.util.helper.platform.NmsHelper;
@@ -89,7 +90,8 @@ public final class DeathHelper {
         if (killer.isPresent()) {
             // set killer's karma
             KarmaHelper.applyKillKarma(killer.get(), ch);
-            if (killer.get().getRound().getLifecycleStage().getDuration() != -1
+            if (killer.get().getRound().getLifecycleStage() == Stage.PLAYING &&
+                    killer.get().getRound().getLifecycleStage().getDuration() != -1
                     && isTraitor(killer.get()) && !isTraitor(chOpt.get())) {
                 killer.get().getRound().getMetadata().set(MetadataKey.Round.HASTE_TIME,
                         killer.get().getRound().getMetadata().<Integer>get(MetadataKey.Round.HASTE_TIME).or(0)
