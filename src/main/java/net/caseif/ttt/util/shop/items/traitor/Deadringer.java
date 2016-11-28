@@ -45,8 +45,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class Deadringer extends Item implements Listener {
 
@@ -85,8 +87,8 @@ public class Deadringer extends Item implements Listener {
                     for (ItemStack i : player.getInventory()) {
                         if (i != null) {
                             if (i.hasItemMeta()) {
-                                if(i.getItemMeta() != null) {
-                                    if(i.getItemMeta().getDisplayName() != null) {
+                                if (i.getItemMeta() != null) {
+                                    if (i.getItemMeta().getDisplayName() != null) {
                                         if (i.getItemMeta().getDisplayName().equals(NAME)) {
                                             stack = i;
                                         }
@@ -113,7 +115,8 @@ public class Deadringer extends Item implements Listener {
                             ChestTrap.placeFakeChest(player, DeathHelper.relocate(ch.getRound(), player.getLocation(), false).getBlock());
                             player.getInventory().remove(trap);
                         }
-                        player.teleport(LocationHelper.convert(locations.toArray(new Location3D[0])[new SecureRandom().nextInt(locations.size())]));
+
+                        player.teleport(LocationHelper.convert(pickLocation(player, locations)));
                         // Reset health
                         player.setHealth(4D);
                         event.setCancelled(true);
@@ -123,5 +126,17 @@ public class Deadringer extends Item implements Listener {
                 }
             }
         }
+    }
+
+    private Location3D pickLocation(Player player, Collection<Location3D> locations) {
+        List<Location3D> filtered = new ArrayList<>();
+        for (Location3D loc : locations) {
+            if (LocationHelper.convert(loc).distance(player.getLocation()) > 15) {
+                filtered.add(loc);
+            }
+        }
+        if (filtered.size() == 0)
+            filtered.addAll(locations);
+        return filtered.get(new SecureRandom().nextInt(filtered.size()));
     }
 }

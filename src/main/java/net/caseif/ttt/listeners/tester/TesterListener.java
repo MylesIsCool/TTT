@@ -69,9 +69,11 @@ public class TesterListener implements Listener {
                                         e.getClickedBlock().removeMetadata("checker", TTTCore.getPlugin());
                                         for (BlockFace face : Tester.faces) {
                                             if (e.getClickedBlock().getRelative(face).hasMetadata("body")) {
+                                                e.getPlayer().sendMessage("You cannot use the tester while dead bodies are in the way! :o");
                                                 return;
                                             }
                                             if (e.getClickedBlock().getRelative(BlockFace.UP).getRelative(face).hasMetadata("body")) {
+                                                e.getPlayer().sendMessage("You cannot use the tester while dead bodies are in the way! :o");
                                                 return;
                                             }
                                         }
@@ -96,6 +98,8 @@ public class TesterListener implements Listener {
                                     }
                                 }, 20L * 4);
 
+                            }else{
+                                e.getPlayer().sendMessage("Traitor tester is warming up...");
                             }
                         }
                     }
