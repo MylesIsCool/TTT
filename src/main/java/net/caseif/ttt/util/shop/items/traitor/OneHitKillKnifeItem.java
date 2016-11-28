@@ -55,6 +55,11 @@ public class OneHitKillKnifeItem extends Item implements Listener {
     }
 
     @Override
+    public int getMax() {
+        return 1;
+    }
+
+    @Override
     public int getCost() {
         return 1;
     }
@@ -78,7 +83,7 @@ public class OneHitKillKnifeItem extends Item implements Listener {
 
                     // use knife
                     player.getWorld().playEffect(player.getLocation(), Effect.POTION_BREAK, 1);
-                    player.setItemInHand(null);
+                    useItem(player);
                 }
             }
         }

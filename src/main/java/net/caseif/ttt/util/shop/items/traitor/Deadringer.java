@@ -71,6 +71,11 @@ public class Deadringer extends Item implements Listener {
     }
 
     @Override
+    public int getMax() {
+        return 1;
+    }
+
+    @Override
     public void use(Player player) {
         player.getInventory().addItem(getIcon());
     }
@@ -120,7 +125,11 @@ public class Deadringer extends Item implements Listener {
                         // Reset health
                         player.setHealth(4D);
                         event.setCancelled(true);
-                        player.getInventory().remove(stack);
+                        if (stack.getAmount() > 1) {
+                            stack.setAmount(stack.getAmount() - 1);
+                        } else {
+                            player.getInventory().remove(stack);
+                        }
                         return;
                     }
                 }

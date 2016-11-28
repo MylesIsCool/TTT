@@ -71,11 +71,16 @@ public class PowerGun extends Item implements Listener {
         player.getInventory().addItem(getIcon());
     }
 
+    @Override
+    public int getMax() {
+        return 1;
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(PlayerInteractEvent event) {
-        if(event.getHand() == EquipmentSlot.OFF_HAND)
+        if (event.getHand() == EquipmentSlot.OFF_HAND)
             return;
-        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
+        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (isValid(event.getPlayer())) {
                 if (isHolding(event.getPlayer(), NAME)) {
                     if (event.getPlayer().getInventory().contains(Material.ARROW)

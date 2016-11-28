@@ -28,6 +28,7 @@ import net.caseif.flint.round.Round;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.util.constant.Stage;
 import net.caseif.ttt.util.helper.event.DeathHelper;
+import net.caseif.ttt.util.helper.gamemode.RoundHelper;
 import net.caseif.ttt.util.helper.platform.LocationHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -107,6 +108,7 @@ public class Drag {
                                     loc.getBlock().setType(Material.PISTON_BASE);
                                     loc.getBlock().setData((byte) 1);
                                     loc.getBlock().setMetadata("body", new FixedMetadataValue(TTTCore.getPlugin(), entity.getMetadata("body").get(0).value()));
+                                    RoundHelper.addToCleaner(round, loc.getBlock(), "body");
                                 }
                             }
                         }, 2L);

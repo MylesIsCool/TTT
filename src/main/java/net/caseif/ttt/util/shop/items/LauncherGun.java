@@ -69,6 +69,11 @@ public class LauncherGun extends Item implements Listener {
         player.getInventory().addItem(getIcon());
     }
 
+    @Override
+    public int getMax() {
+        return 1;
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(PlayerInteractEvent event) {
         if(event.getHand() == EquipmentSlot.OFF_HAND)

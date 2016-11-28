@@ -27,7 +27,6 @@ package net.caseif.ttt.util.shop.items.traitor;
 import com.google.common.base.Optional;
 import net.caseif.flint.challenger.Challenger;
 import net.caseif.ttt.TTTCore;
-import net.caseif.ttt.util.constant.*;
 import net.caseif.ttt.util.constant.Color;
 import net.caseif.ttt.util.shop.ShopHelper;
 import net.caseif.ttt.util.shop.items.Item;
@@ -71,20 +70,25 @@ public class Jihad extends Item implements Listener {
     }
 
     @Override
+    public int getMax() {
+        return 1;
+    }
+
+    @Override
     public void use(Player player) {
         player.getInventory().addItem(getIcon());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(PlayerInteractEvent event) {
-        if(event.getHand() == EquipmentSlot.OFF_HAND)
+        if (event.getHand() == EquipmentSlot.OFF_HAND)
             return;
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK ||
                 event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
             if (isValid(event.getPlayer())) {
                 if (isHolding(event.getPlayer(), NAME)) {
                     if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
-                        event.getPlayer().setItemInHand(null);
+                        useItem(event.getPlayer());
                         activateJihad(event.getPlayer());
                     }
                 }

@@ -36,6 +36,7 @@ import net.caseif.ttt.util.constant.MetadataKey;
 import net.caseif.ttt.util.constant.Role;
 import net.caseif.ttt.util.constant.Stage;
 import net.caseif.ttt.util.helper.gamemode.KarmaHelper;
+import net.caseif.ttt.util.helper.gamemode.RoundHelper;
 import net.caseif.ttt.util.helper.platform.LocationHelper;
 import net.caseif.ttt.util.helper.platform.NmsHelper;
 import net.caseif.ttt.util.helper.platform.PlayerHelper;
@@ -117,6 +118,7 @@ public final class DeathHelper {
 
     private void cancelEvent(final Challenger ch) {
         Location loc = player.getLocation(); // sending the packet resets the location
+        player.setGlowing(false);
 
         if (event != null) {
             event.setDeathMessage("");
@@ -157,7 +159,7 @@ public final class DeathHelper {
         // if dead body in way, not in bounds :D?
         if (playerFlag) {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (ShopHelper.isAlive(player)) {
+                if (ShopHelper.isAlive(player) && l.getWorld().equals(player.getWorld())) {
                     if (player.getLocation().getBlockX() == l.getBlockX() && player.getLocation().getBlockY() == l.getBlockY() && player.getLocation().getBlockZ() == l.getBlockZ()) {
                         return false;
                     }
@@ -241,6 +243,7 @@ public final class DeathHelper {
                 System.currentTimeMillis(),
                 expiry);
         block.setMetadata("body", new FixedMetadataValue(TTTCore.getPlugin(), body));
+        RoundHelper.addToCleaner(ch.getRound(), block, "body");
         ch.getMetadata().set(MetadataKey.Player.BODY, body);
     }
 

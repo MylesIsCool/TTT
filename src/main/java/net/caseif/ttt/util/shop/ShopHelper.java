@@ -35,6 +35,7 @@ import net.caseif.ttt.util.shop.items.DeflectorItem;
 import net.caseif.ttt.util.shop.items.Item;
 import net.caseif.ttt.util.shop.items.LauncherGun;
 import net.caseif.ttt.util.shop.items.detective.BodyArmourItem;
+import net.caseif.ttt.util.shop.items.detective.EyeOfInnocence;
 import net.caseif.ttt.util.shop.items.detective.PowerGun;
 import net.caseif.ttt.util.shop.items.traitor.*;
 import org.bukkit.Bukkit;
@@ -48,16 +49,14 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Static utility class for role-related functionality.
  */
 public final class ShopHelper {
-    public static Item[] DETECTIVE_ITEMS = {new BodyArmourItem(), new PowerGun()};
-    public static Item[] TRAITOR_ITEMS = {new OneHitKillKnifeItem(), new DisguisedGun(), new Jihad(), new ChestTrap(), new Deadringer()};
+    public static Item[] DETECTIVE_ITEMS = {new BodyArmourItem(), new PowerGun(), new EyeOfInnocence()};
+    public static Item[] TRAITOR_ITEMS = {new OneHitKillKnifeItem(), new DisguisedGun(), new Jihad(), new ChestTrap(), new Deadringer(), new SmokeGrenade(), new EyeOfTraitor()};
     public static Item[] BOTH_ITEMS = {new LauncherGun(), new DeflectorItem()};
     public static final String TOKEN_KEY = "tokens";
     public static final String ITEMS_KEY = "bought_items";
@@ -67,12 +66,13 @@ public final class ShopHelper {
     // C4
     // Health Stations (possibly remove current regen?)
     // Maybe displaying health under a name?
-    // Smoke grenades - use potions, emits blindness
     // Radio controlled arrow? fire from other people
+    // End of round stats
     private ShopHelper() {
     }
 
     public static boolean isAlive(Player player) {
+        if(player == null) return false;
         Optional<Challenger> challengerOptional = TTTCore.getInstance().mg.getChallenger(player.getUniqueId());
         if (challengerOptional.isPresent()) {
             return isAlive(challengerOptional.get());
@@ -112,7 +112,7 @@ public final class ShopHelper {
         // Get tokens
         int tokens = getTokens(challengerOptional.get());
         // Get bought items
-        List<Integer> bought = (List<Integer>) (challengerOptional.get().getMetadata().get(ITEMS_KEY).isPresent() ? challengerOptional.get().getMetadata().get(ITEMS_KEY).get() : Arrays.asList());
+        Map<Integer, Integer> bought = (HashMap<Integer, Integer>) (challengerOptional.get().getMetadata().get(ITEMS_KEY).isPresent() ? challengerOptional.get().getMetadata().get(ITEMS_KEY).get() : new HashMap<>());
         // Add items
         List<Item> items = new ArrayList<>();
         items.addAll(Arrays.asList(BOTH_ITEMS));
@@ -120,7 +120,8 @@ public final class ShopHelper {
 
         int i = 0;
         for (Item item : items) {
-            if (bought.contains(item.getId())) continue;
+            int count = bought.containsKey(item.getId()) ? bought.get(item.getId()) : 0;
+            if (item.getMax() <= count && item.getMax() != 0) continue;
             ItemStack baseStack = item.getIcon();
             ItemMeta meta = baseStack.getItemMeta();
 
@@ -128,6 +129,7 @@ public final class ShopHelper {
             // Check tokens :D
             lore.add(item.getCost() > tokens ? (ChatColor.RED + "Need more tokens") : (ChatColor.GREEN + "Click to buy"));
             lore.add(ChatColor.RED + "Cost: " + item.getCost());
+            lore.add(ChatColor.GOLD + "" + (item.getMax() - count) + " Left");
             lore.add("id:" + item.getId());
 
             meta.setLore(lore);
@@ -179,13 +181,13 @@ public final class ShopHelper {
                     player.sendMessage(ChatColor.GREEN + "You have bought the " + event.getCurrentItem().getItemMeta().getDisplayName());
                     item.get().use(player);
 
-                    List<Integer> list = new ArrayList<>();
+                    Map<Integer, Integer> list = new HashMap<>();
                     if (challengerOptional.get().getMetadata().get(ITEMS_KEY).isPresent()) {
-                        if (challengerOptional.get().getMetadata().get(ITEMS_KEY).get() instanceof List) {
-                            list = (List<Integer>) challengerOptional.get().getMetadata().get(ITEMS_KEY).get();
+                        if (challengerOptional.get().getMetadata().get(ITEMS_KEY).get() instanceof Map) {
+                            list = (Map<Integer, Integer>) challengerOptional.get().getMetadata().get(ITEMS_KEY).get();
                         }
                     }
-                    list.add(item.get().getId());
+                    list.put(item.get().getId(), (list.containsKey(item.get().getId()) ? list.get(item.get().getId()) : 0) + 1);
                     challengerOptional.get().getMetadata().set(ITEMS_KEY, list);
                 } else {
                     return;

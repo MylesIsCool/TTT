@@ -65,6 +65,7 @@ public class ChallengerListener {
         }
 
         Player pl = Bukkit.getPlayer(event.getChallenger().getUniqueId());
+        pl.setGlowing(false);
         pl.setWalkSpeed(0.2f);
         pl.setInvulnerable(false);
         pl.setHealth(pl.getMaxHealth());
@@ -110,6 +111,7 @@ public class ChallengerListener {
     public void onChallengerLeaveRound(ChallengerLeaveRoundEvent event) {
         try {
             Player pl = Bukkit.getPlayer(event.getChallenger().getUniqueId());
+            pl.setGlowing(false);
             pl.setScoreboard(TTTCore.getPlugin().getServer().getScoreboardManager().getNewScoreboard());
 
             if (event.getChallenger().getMetadata().containsKey(MetadataKey.Player.SEARCHING_BODY)) {

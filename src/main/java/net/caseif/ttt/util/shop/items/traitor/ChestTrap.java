@@ -26,6 +26,7 @@ package net.caseif.ttt.util.shop.items.traitor;
 
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.util.constant.Color;
+import net.caseif.ttt.util.helper.gamemode.RoundHelper;
 import net.caseif.ttt.util.helper.platform.LocationHelper;
 import net.caseif.ttt.util.shop.items.Item;
 import org.bukkit.Bukkit;
@@ -68,6 +69,11 @@ public class ChestTrap extends Item implements Listener {
     }
 
     @Override
+    public int getMax() {
+        return 1;
+    }
+
+    @Override
     public void use(Player player) {
         player.getInventory().addItem(getIcon());
     }
@@ -83,6 +89,7 @@ public class ChestTrap extends Item implements Listener {
                 loc.getBlock().setType(Material.PISTON_BASE);
                 loc.getBlock().setData((byte) 1);
                 player.sendMessage(ChatColor.RED + "Your trap has been placed... don't open it!");
+                RoundHelper.addToCleaner(TTTCore.getInstance().mg.getChallenger(player.getUniqueId()).get().getRound(), loc.getBlock(), "traitor");
                 loc.getBlock().setMetadata("traitor", new FixedMetadataValue(TTTCore.getPlugin(), player));
             }
         });
@@ -104,7 +111,7 @@ public class ChestTrap extends Item implements Listener {
                 }
                 // backup
                 event.setCancelled(true);
-                event.getPlayer().setItemInHand(null);
+                useItem(event.getPlayer());
                 // Do this
                 placeFakeChest(event.getPlayer(), event.getBlock());
             }
@@ -113,7 +120,7 @@ public class ChestTrap extends Item implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onInteract(PlayerInteractEvent event) {
-        if(event.getHand() == EquipmentSlot.OFF_HAND)
+        if (event.getHand() == EquipmentSlot.OFF_HAND)
             return;
         if (isValid(event.getPlayer())) {
             if (event.getClickedBlock() != null) {

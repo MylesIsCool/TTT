@@ -61,6 +61,11 @@ public class DeflectorItem extends Item implements Listener {
     }
 
     @Override
+    public int getMax() {
+        return 1;
+    }
+
+    @Override
     public void use(Player player) {
         player.getInventory().setChestplate(getIcon());
     }
@@ -73,7 +78,7 @@ public class DeflectorItem extends Item implements Listener {
                     ItemStack chest = ((Player) e.getEntity()).getInventory().getChestplate();
                     if (chest != null) {
                         if (chest.getItemMeta() != null) {
-                            if(chest.getItemMeta().getDisplayName() != null) {
+                            if (chest.getItemMeta().getDisplayName() != null) {
                                 if (chest.getItemMeta().getDisplayName().equals(NAME)) {
                                     if (new SecureRandom().nextInt(3) != 1) {
                                         e.setCancelled(true);

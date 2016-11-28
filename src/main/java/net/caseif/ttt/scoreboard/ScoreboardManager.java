@@ -120,12 +120,12 @@ public class ScoreboardManager {
                     : Role.INNOCENT;
             boolean traitorFound = false;
             if (ch.isSpectating() && !ch.getMetadata().containsKey(MetadataKey.Player.BODY_FOUND)) {
-                if(ch.getMetadata().get(MetadataKey.Player.BODY).isPresent()){
+                if (ch.getMetadata().get(MetadataKey.Player.BODY).isPresent()) {
                     Body body = (Body) ch.getMetadata().get(MetadataKey.Player.BODY).get();
-                    if(body.getKiller().isPresent()){
+                    if (body.getKiller().isPresent()) {
                         Optional<Challenger> challengerOptional = ch.getRound().getArena().getMinigame().getChallenger(body.getKiller().get());
-                        if(challengerOptional.isPresent()){
-                            if(challengerOptional.get().getMetadata().containsKey(MetadataKey.Player.BODY_FOUND)) {
+                        if (challengerOptional.isPresent()) {
+                            if (challengerOptional.get().getMetadata().containsKey(MetadataKey.Player.BODY_FOUND)) {
                                 traitorFound = true;
                             }
                         }

@@ -56,6 +56,11 @@ public class BodyArmourItem extends Item {
     }
 
     @Override
+    public int getMax() {
+        return 1;
+    }
+
+    @Override
     public void use(Player player) {
         player.getInventory().setHelmet(makeBlue(new ItemStack(Material.LEATHER_HELMET)));
         player.getInventory().setChestplate(makeBlue(new ItemStack(Material.LEATHER_CHESTPLATE)));
@@ -63,7 +68,7 @@ public class BodyArmourItem extends Item {
         player.getInventory().setBoots(makeBlue(new ItemStack(Material.LEATHER_BOOTS)));
     }
 
-    private ItemStack makeBlue(ItemStack itemStack){
+    private ItemStack makeBlue(ItemStack itemStack) {
         LeatherArmorMeta lam = (LeatherArmorMeta) itemStack.getItemMeta();
         lam.setColor(Color.BLUE);
         itemStack.setItemMeta(lam);

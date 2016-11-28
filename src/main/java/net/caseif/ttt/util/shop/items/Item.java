@@ -45,9 +45,19 @@ public abstract class Item {
 
     public abstract void use(Player player);
 
+    public void useItem(Player player) {
+        if (player.getItemInHand().getAmount() > 1) {
+            player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
+        } else {
+            player.setItemInHand(null);
+        }
+    }
+
     public int getId() {
         return id;
     }
+
+    public abstract int getMax();
 
     public static boolean isValid(Player player) {
         Optional<Challenger> challengerOptional = TTTCore.getInstance().mg.getChallenger(player.getUniqueId());

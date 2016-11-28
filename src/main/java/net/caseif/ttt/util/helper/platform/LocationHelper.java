@@ -28,6 +28,7 @@ import net.caseif.flint.util.physical.Location3D;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.WorldCreator;
+import org.bukkit.block.Block;
 
 /**
  * Static utility class for location-related functionality.
@@ -45,11 +46,17 @@ public final class LocationHelper {
         return new Location3D(location.getWorld().getName(), location.getX(), location.getY(), location.getZ());
     }
 
+    public static Location3D convert(Block location) {
+        return new Location3D(location.getWorld().getName(), location.getX(), location.getY(), location.getZ());
+    }
+
     public static Location convert(Location3D location) {
         return new Location(location.getWorld().isPresent()
                 ? Bukkit.createWorld(new WorldCreator(location.getWorld().get()))
                 : null,
                 location.getX(), location.getY(), location.getZ());
     }
+
+
 
 }

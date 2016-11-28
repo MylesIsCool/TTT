@@ -27,6 +27,7 @@ package net.caseif.ttt.listeners.tester;
 import net.caseif.flint.challenger.Challenger;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.util.constant.Stage;
+import net.caseif.ttt.util.helper.gamemode.RoundHelper;
 import net.caseif.ttt.util.shop.ShopHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -63,6 +64,8 @@ public class TesterListener implements Listener {
                         }
                         if (!e.getClickedBlock().hasMetadata("tester")) {
                             if (!e.getClickedBlock().hasMetadata("checker")) {
+                                e.getPlayer().sendMessage("Warming up tester...");
+                                RoundHelper.addToCleaner(ch.getRound(), e.getClickedBlock(), "checker");
                                 e.getClickedBlock().setMetadata("checker", new FixedMetadataValue(TTTCore.getPlugin(), true));
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(TTTCore.getPlugin(), new Runnable() {
                                     public void run() {
@@ -98,8 +101,6 @@ public class TesterListener implements Listener {
                                     }
                                 }, 20L * 4);
 
-                            }else{
-                                e.getPlayer().sendMessage("Traitor tester is warming up...");
                             }
                         }
                     }

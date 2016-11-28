@@ -65,6 +65,7 @@ public class MetadataKey {
         public static final String ROUND_RESULT = "result";
         public static final String ROUND_PLAYER_COUNT = "players";
         public static final String HASTE_TIME = "hasteTime";
+        public static final String CLEANUP = "cleanup";
 
         private Round() {
         }

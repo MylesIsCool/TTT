@@ -26,6 +26,7 @@ package net.caseif.ttt.util.helper.gamemode;
 
 import net.caseif.flint.challenger.Challenger;
 import net.caseif.flint.round.Round;
+import net.caseif.flint.util.physical.Location3D;
 import net.caseif.rosetta.Localizable;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.scoreboard.ScoreboardManager;
@@ -34,16 +35,22 @@ import net.caseif.ttt.util.constant.Color;
 import net.caseif.ttt.util.constant.MetadataKey;
 import net.caseif.ttt.util.constant.Role;
 import net.caseif.ttt.util.constant.Stage;
+import net.caseif.ttt.util.helper.platform.LocationHelper;
 import net.caseif.ttt.util.helper.platform.TitleHelper;
 import net.caseif.ttt.util.shop.ShopHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static net.caseif.ttt.lobby.StatusLobbySignPopulator.SIGN_HASTE_SWITCH_PERIOD;
 
@@ -172,6 +179,29 @@ public final class RoundHelper {
         }
         TitleHelper.sendVictoryTitle(round,
                 round.getMetadata().<Boolean>get(MetadataKey.Round.TRAITOR_VICTORY).or(false));
+        // Cleanup Metadata
+        if (round.getMetadata().get(MetadataKey.Round.CLEANUP).isPresent()) {
+            Map<Location3D, Set<String>> cleanup = (Map<Location3D, Set<String>>) round.getMetadata().get(MetadataKey.Round.CLEANUP).get();
+            for (Map.Entry<Location3D, Set<String>> entry : cleanup.entrySet()) {
+                Block block = LocationHelper.convert(entry.getKey()).getBlock();
+                for (String s : entry.getValue()) {
+                    block.removeMetadata(s, TTTCore.getPlugin());
+                }
+            }
+            cleanup.clear();
+        }
+    }
+
+    public static void addToCleaner(Round round, Block block, String key) {
+        if (!round.getMetadata().get(MetadataKey.Round.CLEANUP).isPresent()) {
+            round.getMetadata().set(MetadataKey.Round.CLEANUP, new HashMap<>());
+        }
+        Map<Location3D, Set<String>> cleanup = (Map<Location3D, Set<String>>) round.getMetadata().get(MetadataKey.Round.CLEANUP).get();
+        Location3D loc = LocationHelper.convert(block);
+        if (!cleanup.containsKey(loc)) {
+            cleanup.put(loc, new HashSet<String>());
+        }
+        cleanup.get(loc).add(key);
     }
 
     public static void distributeItems(Round round) {

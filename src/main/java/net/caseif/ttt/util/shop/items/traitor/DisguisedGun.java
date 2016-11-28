@@ -65,13 +65,18 @@ public class DisguisedGun extends Item implements Listener {
     }
 
     @Override
+    public int getMax() {
+        return 1;
+    }
+
+    @Override
     public void use(Player player) {
         player.getInventory().addItem(getIcon());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(PlayerInteractEvent event) {
-        if(event.getHand() == EquipmentSlot.OFF_HAND)
+        if (event.getHand() == EquipmentSlot.OFF_HAND)
             return;
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (isValid(event.getPlayer())) {

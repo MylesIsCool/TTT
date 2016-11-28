@@ -29,6 +29,7 @@ import net.caseif.flint.challenger.Challenger;
 import net.caseif.flint.round.Round;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.util.helper.gamemode.RoleHelper;
+import net.caseif.ttt.util.helper.gamemode.RoundHelper;
 import net.caseif.ttt.util.shop.ShopHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -86,6 +87,7 @@ public class Tester implements Runnable {
     public void start() {
         cleanPlayers();
         pressurePlate.setMetadata("tester", new FixedMetadataValue(TTTCore.getPlugin(), this));
+        RoundHelper.addToCleaner(round, pressurePlate, "tester");
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(TTTCore.getPlugin(), this, 0L, 2L);
     }
 
