@@ -179,9 +179,9 @@ public final class DeathHelper {
                     return b.getLocation();
                 }
                 b = b.getRelative(BlockFace.DOWN);
-                if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round, checkPlayers)) {
-                    return b.getLocation();
-                }
+//                if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round, checkPlayers)) {
+//                    return b.getLocation();
+//                }
             }
             return loc;
         } else {
@@ -189,9 +189,15 @@ public final class DeathHelper {
             for (BlockFace face : faces) {
                 Block b = loc.getBlock();
                 for (int i = 0; i < 5; i++) {
+                    if (b.getRelative(face).getType() != Material.AIR && DeathHelper.isInBounds(b.getLocation(), round, checkPlayers)) {
+                        return b.getLocation();
+                    }
                     b = b.getRelative(face);
                     for (BlockFace face2 : faces) {
                         for (int i2 = 0; i2 < 5; i2++) {
+                            if (b.getRelative(face2).getType() != Material.AIR && DeathHelper.isInBounds(b.getLocation(), round, checkPlayers)) {
+                                return b.getLocation();
+                            }
                             b = b.getRelative(face2);
                             if (b.getType() == Material.AIR && DeathHelper.isInBounds(b.getLocation(), round, checkPlayers)) {
                                 return b.getLocation();

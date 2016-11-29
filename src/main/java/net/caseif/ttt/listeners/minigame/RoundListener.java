@@ -26,6 +26,7 @@ package net.caseif.ttt.listeners.minigame;
 
 import static net.caseif.ttt.util.helper.gamemode.RoleHelper.isTraitor;
 
+import net.caseif.flint.util.physical.Location3D;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.scoreboard.ScoreboardManager;
 import net.caseif.ttt.util.RoundRestartDaemon;
@@ -49,13 +50,17 @@ import net.caseif.flint.event.round.RoundChangeLifecycleStageEvent;
 import net.caseif.flint.event.round.RoundEndEvent;
 import net.caseif.flint.event.round.RoundTimerTickEvent;
 import net.caseif.flint.round.Round;
+import net.caseif.ttt.util.helper.platform.LocationHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -218,7 +223,17 @@ public class RoundListener {
         if (event.getRound().getLifecycleStage() != Stage.ROUND_OVER) {
             RoundHelper.closeRound(event.getRound(), event.getRound().getLifecycleStage() == Stage.PLAYING);
         }
-
+        // Cleanup Metadata
+        if (event.getRound().getMetadata().get(MetadataKey.Round.CLEANUP).isPresent()) {
+            Map<Location3D, Set<String>> cleanup = (Map<Location3D, Set<String>>) event.getRound().getMetadata().get(MetadataKey.Round.CLEANUP).get();
+            for (Map.Entry<Location3D, Set<String>> entry : cleanup.entrySet()) {
+                Block block = LocationHelper.convert(entry.getKey()).getBlock();
+                for (String s : entry.getValue()) {
+                    block.removeMetadata(s, TTTCore.getPlugin());
+                }
+            }
+            cleanup.clear();
+        }
         for (Entity ent : Bukkit.getWorld(event.getRound().getArena().getWorld()).getEntities()) {
             if (ent.getType() == EntityType.ARROW) {
                 ent.remove();

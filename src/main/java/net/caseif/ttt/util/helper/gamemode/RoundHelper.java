@@ -179,17 +179,6 @@ public final class RoundHelper {
         }
         TitleHelper.sendVictoryTitle(round,
                 round.getMetadata().<Boolean>get(MetadataKey.Round.TRAITOR_VICTORY).or(false));
-        // Cleanup Metadata
-        if (round.getMetadata().get(MetadataKey.Round.CLEANUP).isPresent()) {
-            Map<Location3D, Set<String>> cleanup = (Map<Location3D, Set<String>>) round.getMetadata().get(MetadataKey.Round.CLEANUP).get();
-            for (Map.Entry<Location3D, Set<String>> entry : cleanup.entrySet()) {
-                Block block = LocationHelper.convert(entry.getKey()).getBlock();
-                for (String s : entry.getValue()) {
-                    block.removeMetadata(s, TTTCore.getPlugin());
-                }
-            }
-            cleanup.clear();
-        }
     }
 
     public static void addToCleaner(Round round, Block block, String key) {
