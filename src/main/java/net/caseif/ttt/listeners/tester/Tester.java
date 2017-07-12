@@ -92,7 +92,46 @@ public class Tester implements Runnable {
     }
 
     public int getColour() {
+
+        // End of rigging
         if (colour == 0) {
+            // Check if rigged
+            if (pressurePlate.hasMetadata("rig")) {
+                int rigging = (int) pressurePlate.getMetadata("rig").get(0).value();
+                pressurePlate.removeMetadata("rig", TTTCore.getPlugin());
+                if (rigging == 1) {
+                    colour = 5;
+                    return 5;
+                }
+                if (rigging == 2) {
+                    colour = 14;
+                    return 14;
+                }
+                if (rigging == 3) {
+                    UUID target = null;
+                    if (pressurePlate.hasMetadata("alreadyrigged")) {
+                        target = (UUID) pressurePlate.getMetadata("alreadyrigged").get(0).value();
+                    }
+                    Player player = Bukkit.getPlayer(target);
+                    if (!ShopHelper.isAlive(player)) {
+                        player = null;
+                    }
+                    for (UUID uuid : players) {
+                        Optional<Challenger> ch = TTTCore.getInstance().mg.getChallenger(uuid);
+                        if (ch.isPresent()) {
+                            if (ShopHelper.isAlive(ch.get())) {
+                                if (player == null) {
+                                    Bukkit.getPlayer(uuid).damage(100D);
+                                } else {
+                                    Bukkit.getPlayer(uuid).damage(100D, player);
+                                }
+                            }
+                        }
+                    }
+                    colour = 10;
+                    return 10;
+                }
+            }
             int last = 10;
             for (UUID uuid : players) {
                 Optional<Challenger> ch = TTTCore.getInstance().mg.getChallenger(uuid);

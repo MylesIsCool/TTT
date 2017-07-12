@@ -66,12 +66,12 @@ public class EyeOfTraitor extends Item implements Listener {
 
     @Override
     public int getCost() {
-        return 2;
+        return 1;
     }
 
     @Override
     public int getMax() {
-        return 1;
+        return 5;
     }
 
     @Override

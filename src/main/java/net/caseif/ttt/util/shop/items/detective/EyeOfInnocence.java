@@ -71,7 +71,7 @@ public class EyeOfInnocence extends Item implements Listener {
 
     @Override
     public int getMax() {
-        return 2;
+        return 5;
     }
 
     @Override

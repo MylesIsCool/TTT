@@ -28,6 +28,7 @@ import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.util.constant.Color;
 import net.caseif.ttt.util.helper.gamemode.RoundHelper;
 import net.caseif.ttt.util.helper.platform.LocationHelper;
+import net.caseif.ttt.util.shop.ShopHelper;
 import net.caseif.ttt.util.shop.items.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -127,7 +128,12 @@ public class ChestTrap extends Item implements Listener {
                 if (event.getClickedBlock().hasMetadata("traitor")) {
                     event.setCancelled(true);
                     // Damage
-                    event.getPlayer().damage(100d, (Player) event.getClickedBlock().getMetadata("traitor").get(0).value());
+                    Player player = (Player) event.getClickedBlock().getMetadata("traitor").get(0).value();
+                    if (ShopHelper.isAlive(player)) {
+                        event.getPlayer().damage(100d, player);
+                    } else {
+                        event.getPlayer().damage(100d);
+                    }
                     event.getPlayer().sendMessage(ChatColor.RED + "Ouch, looks like that was a trap!");
                     // Restore
                     event.getClickedBlock().setType(Material.AIR);

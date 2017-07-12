@@ -24,11 +24,13 @@
 
 package net.caseif.ttt.util.shop;
 
+import com.google.common.base.Optional;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 public class TTTInventoryHolder implements InventoryHolder{
     private String type;
+    private Optional data;
 
     public TTTInventoryHolder(String type) {
         this.type = type;
@@ -41,5 +43,13 @@ public class TTTInventoryHolder implements InventoryHolder{
     @Override
     public Inventory getInventory() {
         return null;
+    }
+
+    public Optional getData() {
+        return data;
+    }
+
+    public void setData(Optional data) {
+        this.data = data;
     }
 }

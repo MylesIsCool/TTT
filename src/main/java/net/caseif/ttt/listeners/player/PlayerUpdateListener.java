@@ -105,7 +105,9 @@ public class PlayerUpdateListener implements Listener {
                                 || damagerCh.get().getRound().getLifecycleStage() == Stage.PREPARING)
                                 || !victim.isPresent()
                                 || damagerCh.get().isSpectating()) {
+
                             event.setCancelled(true);
+                            // TODO: Don't canel if chest?
                             return;
                         }
 

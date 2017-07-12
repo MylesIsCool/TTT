@@ -31,6 +31,7 @@ import net.caseif.ttt.listeners.world.ListenerManager;
 import net.caseif.ttt.util.constant.MetadataKey;
 import net.caseif.ttt.util.constant.Role;
 import net.caseif.ttt.util.helper.gamemode.RoleHelper;
+import net.caseif.ttt.util.helper.gamemode.RoundHelper;
 import net.caseif.ttt.util.shop.items.DeflectorItem;
 import net.caseif.ttt.util.shop.items.Item;
 import net.caseif.ttt.util.shop.items.LauncherGun;
@@ -41,6 +42,7 @@ import net.caseif.ttt.util.shop.items.traitor.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -48,6 +50,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.*;
 
@@ -72,7 +75,7 @@ public final class ShopHelper {
     }
 
     public static boolean isAlive(Player player) {
-        if(player == null) return false;
+        if (player == null) return false;
         Optional<Challenger> challengerOptional = TTTCore.getInstance().mg.getChallenger(player.getUniqueId());
         if (challengerOptional.isPresent()) {
             return isAlive(challengerOptional.get());
@@ -189,6 +192,36 @@ public final class ShopHelper {
                     }
                     list.put(item.get().getId(), (list.containsKey(item.get().getId()) ? list.get(item.get().getId()) : 0) + 1);
                     challengerOptional.get().getMetadata().set(ITEMS_KEY, list);
+                } else {
+                    return;
+                }
+            } else {
+                return;
+            }
+        }
+        if (holder.getType().equals("tester")) {
+            if (event.getCurrentItem() != null) {
+                int rig = 0;
+                if (event.getCurrentItem().getType() == Material.STAINED_GLASS) {
+                    if (event.getCurrentItem().getDurability() == 5) {
+                        rig = 1;
+                    }
+                    if (event.getCurrentItem().getDurability() == 14) {
+                        rig = 2;
+                    }
+                }
+                if (event.getCurrentItem().getType() == Material.GOLD_SWORD) {
+                    rig = 3;
+                }
+                if (rig != 0 && holder.getData().isPresent()) {
+                    Block block = (Block) holder.getData().get();
+                    if (!block.hasMetadata("alreadyrigged")) {
+                        player.sendMessage(ChatColor.RED + "The tester has been rigged for the next player to enter...");
+                        RoundHelper.addToCleaner(challengerOptional.get().getRound(), block, "alreadyrigged");
+                        RoundHelper.addToCleaner(challengerOptional.get().getRound(), block, "rig");
+                        block.setMetadata("alreadyrigged", new FixedMetadataValue(TTTCore.getPlugin(), challengerOptional.get().getUniqueId()));
+                        block.setMetadata("rig", new FixedMetadataValue(TTTCore.getPlugin(), rig));
+                    }
                 } else {
                     return;
                 }

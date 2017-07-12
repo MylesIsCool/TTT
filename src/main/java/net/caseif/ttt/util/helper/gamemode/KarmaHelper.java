@@ -24,16 +24,13 @@
 
 package net.caseif.ttt.util.helper.gamemode;
 
-import static net.caseif.ttt.util.helper.gamemode.RoleHelper.isTraitor;
-
+import net.caseif.flint.challenger.Challenger;
+import net.caseif.flint.round.Round;
 import net.caseif.ttt.TTTCore;
 import net.caseif.ttt.util.config.ConfigKey;
 import net.caseif.ttt.util.constant.Color;
 import net.caseif.ttt.util.constant.MetadataKey;
 import net.caseif.ttt.util.constant.Stage;
-
-import net.caseif.flint.challenger.Challenger;
-import net.caseif.flint.round.Round;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -42,6 +39,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
+
+import static net.caseif.ttt.util.helper.gamemode.RoleHelper.isTraitor;
 
 /**
  * Static utility class for karma-related functionality.
@@ -148,19 +147,19 @@ public final class KarmaHelper {
     }
 
     public static void applyDamageKarma(Challenger damager, Challenger victim, double damage) {
-        if(damager.getUniqueId().equals(victim.getUniqueId())) return;
+        if (damager.getUniqueId().equals(victim.getUniqueId())) return;
         if (isTraitor(damager) == isTraitor(victim)) { // team damage
             subtractKarma(damager, getDamagePenalty(damage, getKarma(victim)));
-        } else if (!isTraitor(damager)) { // isTraitor(victim) is implicitly true - innocent damaging traitor
+        } else { // isTraitor(victim) is implicitly true - innocent damaging traitor
             addKarma(damager, getDamageReward(damage));
         }
     }
 
     public static void applyKillKarma(Challenger killer, Challenger victim) {
-        if(killer.getUniqueId().equals(victim.getUniqueId())) return;
+        if (killer.getUniqueId().equals(victim.getUniqueId())) return;
         if (isTraitor(killer) == isTraitor(victim)) { // team kill
             subtractKarma(killer, getKillPenalty(getKarma(victim)));
-        } else if (!isTraitor(killer)) { // isTraitor(victim) is implicitly true - innocent damaging traitor
+        } else { // isTraitor(victim) is implicitly true - innocent damaging traitor
             addKarma(killer, getKillReward());
         }
     }
